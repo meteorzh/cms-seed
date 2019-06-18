@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.wenzhencn.cmsseed.system.mapper.RoleMapper">
+	<resultMap id="baseResultMap" type="com.github.wenzhencn.cmsseed.system.entity.RoleDO">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+	</resultMap>
+	
+	<!-- 所有列 -->
+	<sql id="allColumnList">
+		id, `code`, `name`
+	</sql>
+	
+	<!-- 基本列Where条件 -->
+	<sql id="baseWhereClause">
+        <trim prefix="WHERE" prefixOverrides="AND">
+			<if test="code != null and code != ''">
+				AND `code`=#{code}
+			</if>
+			<if test="name != null and name != ''">
+				AND `name`=#{name}
+			</if>
+		</trim>
+    </sql>
+    
+    <!-- 选择性更新Set -->
+    <sql id="selectiveSetClause">
+        <set>
+			<if test="code != null and code != ''">
+                `code`=#{code}, 
+            </if>
+			<if test="name != null and name != ''">
+                `name`=#{name}
+            </if>
+		</set>
+    </sql>
+    
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Object">
+        INSERT INTO sys_role (
+			<include refid="allColumnList" />
+        )
+        VALUES (
+        	#{id}, #{code}, #{name}
+        )
+    </insert>
+    
+    
+    <!-- 批量新增 -->
+    <insert id="multiInsert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_role (
+		<include refid="allColumnList" />
+        )
+        VALUES
+    	<foreach collection="list" item="itm" separator=",">
+    		(#{itm.id}, #{itm.code}, #{itm.name})
+    	</foreach>
+    </insert>
+    
+    <!-- 删除 -->
+    <delete id="delete">
+        DELETE FROM sys_role
+        WHERE id = #{id}
+    </delete>
+    
+    <!-- 批量删除 -->
+    <delete id="multiDelete">
+    	DELETE FROM sys_role
+        WHERE id IN
+        <foreach collection="list" item="itm" open="(" close=")" separator=",">
+    		#{itm}
+    	</foreach>
+    </delete>
+    
+    <!-- 更新 -->
+    <update id="update" parameterType="Object">
+        UPDATE sys_role SET
+			`code`=#{code}, 
+			`name`=#{name}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 批量更新 -->
+    <update id="multiUpdate">
+    	<foreach collection="list" item="itm" separator=";">
+    		UPDATE sys_role SET
+				`code`=#{itm.code}, 
+				`name`=#{itm.name}
+	        WHERE id = #{itm.id}
+    	</foreach>
+    </update>
+    
+    <!-- 选择更新 -->
+    <update id="updateSelective">
+        UPDATE sys_role
+        <include refid="selectiveSetClause" />
+        WHERE id = #{id}
+    </update>
+    
+    <!--批量选择更新-->
+    <update id="multiUpdateSelective">
+    	<foreach collection="list" item="itm" separator=";">
+    		UPDATE sys_role
+	        <set>
+				<if test="itm.code != null and itm.code != ''">
+	                `code`=#{itm.code}, 
+	            </if>
+				<if test="itm.name != null and itm.name != ''">
+	                `name`=#{itm.name}
+	            </if>
+			</set>
+	        WHERE id = #{itm.id}
+    	</foreach>
+    </update>
+    
+    <!-- 根据非主键字段查询条件计数 -->
+    <select id="count" parameterType="Object">
+    	SELECT COUNT(*) FROM sys_role
+    	<include refid="baseWhereClause" />
+    </select>
+    
+    <!-- 根据主键查询 -->
+    <select id="select" resultMap="baseResultMap">
+        SELECT
+        <include refid="allColumnList" />
+        FROM sys_role
+        WHERE id = #{id}
+    </select>
+    
+    <!-- 根据对象查询列表 -->
+    <select id="selectList" parameterType="Object" resultMap="baseResultMap">
+    	SELECT
+    	<include refid="allColumnList" />
+    	FROM sys_role
+    	<include refid="baseWhereClause" />
+    </select>
+    
+    <!-- 以上为生成工具生成,支持基础方法,切勿修改 -->
+    
+    <select id="selectByGroups" resultMap="baseResultMap">
+    	SELECT
+    		r.id, r.`code`, r.`name`
+    	FROM sys_role r
+    	INNER JOIN sys_r_role_group rg ON rg.group_id IN 
+    	<foreach collection="groupIds" item="itm" separator="," open="(" close=")">#{itm}</foreach>
+    	GROUP BY r.id
+    </select>
+    
+    <select id="selectByUser" resultMap="baseResultMap">
+    	SELECT
+    		r.id, r.`code`, r.`name`
+    	FROM sys_role r
+    	INNER JOIN sys_r_role_user ru ON ru.user_id = #{userId} 
+    </select>
+    
+    <select id="selectByUserFromGroups" resultMap="baseResultMap">
+    	SELECT 
+    		r.id, r.`code`, r.`name` 
+    	FROM sys_group g
+		INNER JOIN sys_r_user_group ug ON ug.group_id = g.id AND ug.user_id = #{userId}
+		LEFT JOIN sys_r_role_group rg ON rg.group_id = g.id
+		LEFT JOIN sys_role r ON r.id = rg.role_id
+		GROUP BY r.id
+    </select>
+    
+</mapper>

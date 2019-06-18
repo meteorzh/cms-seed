@@ -1,0 +1,194 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.github.wenzhencn</groupId>
+	<artifactId>cms-seed</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>cms-seed</name>
+	<description>CMS Seed Project</description>
+
+	<properties>
+		<druid.ver>1.1.17</druid.ver>
+		<pagehelper.starter.ver>1.2.12</pagehelper.starter.ver>
+		<spring.boot.ver>2.1.5.RELEASE</spring.boot.ver>
+		<swagger.ver>2.9.2</swagger.ver>
+		<mybatis.boot.starter.ver>2.0.1</mybatis.boot.starter.ver>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.ver}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mybatis.spring.boot</groupId>
+				<artifactId>mybatis-spring-boot-starter</artifactId>
+				<version>${mybatis.boot.starter.ver}</version>
+			</dependency>
+			<!-- Druid -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid-spring-boot-starter</artifactId>
+				<version>${druid.ver}</version>
+			</dependency>
+			
+			<!-- Pagehelper -->
+			<dependency>
+			    <groupId>com.github.pagehelper</groupId>
+			    <artifactId>pagehelper-spring-boot-starter</artifactId>
+			    <version>${pagehelper.starter.ver}</version>
+			</dependency>
+			
+			<!-- Swagger2 -->
+		    <dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>${swagger.ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${swagger.ver}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+	        <groupId>org.apache.commons</groupId>
+	        <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!-- <dependency>
+	        <groupId>commons-codec</groupId>
+	        <artifactId>commons-codec</artifactId>
+        </dependency> -->
+	
+		<!-- Spring Boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+        <!-- <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency> -->
+        <dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-acl</artifactId>
+		</dependency>
+		
+		<!-- Mysql -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		
+		<!-- Mybatis -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+		</dependency>
+		<!-- Pagehelper -->
+		<dependency>
+		    <groupId>com.github.pagehelper</groupId>
+		    <artifactId>pagehelper-spring-boot-starter</artifactId>
+		</dependency>
+
+		<!-- Druid -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid-spring-boot-starter</artifactId>
+		</dependency>
+		
+		<!-- Swagger2 -->
+	    <dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+		</dependency>
+
+		<!-- Other -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	</dependencies>
+
+	<!-- 指定JDK版本 -->
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>application.yml</include>
+					<include>application-dev.yml</include>
+					<include>application-test.yml</include>
+					<include>application-prod.yml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>logback-spring.xml</include>
+					<include>mapper/*</include>
+					<include>static/*</include>
+				</includes>
+			</resource>
+		</resources>
+	
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+	            <artifactId>spring-boot-maven-plugin</artifactId>
+	            <configuration>
+	            	<mainClass>com.github.wenzhencn.cmsseed.CmsSeedApplication</mainClass>
+	            	<layout>ZIP</layout>
+	            </configuration>
+	            <executions>
+	            	<execution>
+	            		<goals>
+	            			<goal>repackage</goal>
+	            		</goals>
+	            	</execution>
+	            </executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<delimiters>
+						<delimiter>@</delimiter>
+					</delimiters>
+					<useDefaultDelimiters>false</useDefaultDelimiters>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

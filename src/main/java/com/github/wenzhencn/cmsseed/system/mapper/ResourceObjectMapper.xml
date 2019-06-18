@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.wenzhencn.cmsseed.system.mapper.ResourceObjectMapper">
+	<resultMap id="baseResultMap" type="com.github.wenzhencn.cmsseed.system.entity.ResourceObjectDO">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="resource_id" jdbcType="INTEGER" property="resourceId" />
+		<result column="resource_object_id" jdbcType="BIGINT" property="resourceObjectId" />
+		<result column="owner_id" jdbcType="BIGINT" property="ownerId" />
+	</resultMap>
+	
+	<!-- 所有列 -->
+	<sql id="allColumnList">
+		id, resource_id, resource_object_id, owner_id
+	</sql>
+	
+	<!-- 基本列Where条件 -->
+	<sql id="baseWhereClause">
+        <trim prefix="WHERE" prefixOverrides="AND">
+			<if test="resourceId != null">
+				AND resource_id=#{resourceId}
+			</if>
+			<if test="resourceObjectId != null">
+				AND resource_object_id=#{resourceObjectId}
+			</if>
+			<if test="ownerId != null">
+				AND owner_id=#{ownerId}
+			</if>
+		</trim>
+    </sql>
+    
+    <!-- 选择性更新Set -->
+    <sql id="selectiveSetClause">
+        <set>
+			<if test="resourceId != null">
+                resource_id=#{resourceId}, 
+            </if>
+			<if test="resourceObjectId != null">
+                resource_object_id=#{resourceObjectId}, 
+            </if>
+			<if test="ownerId != null">
+                owner_id=#{ownerId}
+            </if>
+		</set>
+    </sql>
+    
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Object">
+        INSERT INTO sys_resource_object (
+			<include refid="allColumnList" />
+        )
+        VALUES (
+        	#{id}, #{resourceId}, #{resourceObjectId}, #{ownerId}
+        )
+    </insert>
+    
+    
+    <!-- 批量新增 -->
+    <insert id="multiInsert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_resource_object (
+		<include refid="allColumnList" />
+        )
+        VALUES
+    	<foreach collection="list" item="itm" separator=",">
+    		(#{itm.id}, #{itm.resourceId}, #{itm.resourceObjectId}, #{itm.ownerId})
+    	</foreach>
+    </insert>
+    
+    <!-- 删除 -->
+    <delete id="delete">
+        DELETE FROM sys_resource_object
+        WHERE id = #{id}
+    </delete>
+    
+    <!-- 批量删除 -->
+    <delete id="multiDelete">
+    	DELETE FROM sys_resource_object
+        WHERE id IN
+        <foreach collection="list" item="itm" open="(" close=")" separator=",">
+    		#{itm}
+    	</foreach>
+    </delete>
+    
+    <!-- 更新 -->
+    <update id="update" parameterType="Object">
+        UPDATE sys_resource_object SET
+			resource_id=#{resourceId}, 
+			resource_object_id=#{resourceObjectId}, 
+			owner_id=#{ownerId}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 批量更新 -->
+    <update id="multiUpdate">
+    	<foreach collection="list" item="itm" separator=";">
+    		UPDATE sys_resource_object SET
+				resource_id=#{itm.resourceId}, 
+				resource_object_id=#{itm.resourceObjectId}, 
+				owner_id=#{itm.ownerId}
+	        WHERE id = #{itm.id}
+    	</foreach>
+    </update>
+    
+    <!-- 选择更新 -->
+    <update id="updateSelective">
+        UPDATE sys_resource_object
+        <include refid="selectiveSetClause" />
+        WHERE id = #{id}
+    </update>
+    
+    <!--批量选择更新-->
+    <update id="multiUpdateSelective">
+    	<foreach collection="list" item="itm" separator=";">
+    		UPDATE sys_resource_object
+	        <set>
+				<if test="itm.resourceId != null">
+	                resource_id=#{itm.resourceId}, 
+	            </if>
+				<if test="itm.resourceObjectId != null">
+	                resource_object_id=#{itm.resourceObjectId}, 
+	            </if>
+				<if test="itm.ownerId != null">
+	                owner_id=#{itm.ownerId}
+	            </if>
+			</set>
+	        WHERE id = #{itm.id}
+    	</foreach>
+    </update>
+    
+    <!-- 根据非主键字段查询条件计数 -->
+    <select id="count" parameterType="Object">
+    	SELECT COUNT(*) FROM sys_resource_object
+    	<include refid="baseWhereClause" />
+    </select>
+    
+    <!-- 根据主键查询 -->
+    <select id="select" resultMap="baseResultMap">
+        SELECT
+        <include refid="allColumnList" />
+        FROM sys_resource_object
+        WHERE id = #{id}
+    </select>
+    
+    <!-- 根据对象查询列表 -->
+    <select id="selectList" parameterType="Object" resultMap="baseResultMap">
+    	SELECT
+    	<include refid="allColumnList" />
+    	FROM sys_resource_object
+    	<include refid="baseWhereClause" />
+    </select>
+    
+    <!-- 以上为生成工具生成,支持基础方法,切勿修改 -->
+    
+    <resultMap id="rsrcObjMap" extends="baseResultMap" type="com.github.wenzhencn.cmsseed.system.model.ResourceObject">
+    	<result column="resource_code" jdbcType="VARCHAR" property="resourceCode" />
+    </resultMap>
+    
+    <select id="selectByRsrcAndObj" resultMap="rsrcObjMap">
+    	SELECT 
+    		ro.id, ro.resource_id, ro.resource_object_id, ro.owner_id, r.`code` AS resource_code
+    	FROM sys_resource r 
+    	INNER JOIN sys_resource_object ro ON ro.resource_id = r.id AND r.`code` = #{rsrcCode} AND ro.resource_object_id = #{rsrcObjId}
+    </select>
+    
+</mapper>
