@@ -25,6 +25,7 @@ public class SecurityUser implements EntryUserDetails, CredentialsContainer {
 	
 	private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
 	
+	private final Long userId;
 	private String password;
 	private final String username;
 	private final Set<GrantedAuthority> authorities;
@@ -34,11 +35,11 @@ public class SecurityUser implements EntryUserDetails, CredentialsContainer {
 	private final boolean credentialsNonExpired;
 	private final boolean enabled;
 
-	public SecurityUser(String username, String password, Collection<? extends GrantedAuthority> authorities, Set<String> entrys) {
-		this(username, password, true, true, true, true, authorities, entrys);
+	public SecurityUser(Long userId, String username, String password, Collection<? extends GrantedAuthority> authorities, Set<String> entrys) {
+		this(userId, username, password, true, true, true, true, authorities, entrys);
 	}
 
-	public SecurityUser(String username, String password, boolean enabled, boolean accountNonExpired, 
+	public SecurityUser(Long userId, String username, String password, boolean enabled, boolean accountNonExpired, 
 			boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Set<String> entrys) {
 
 		if (((username == null) || "".equals(username)) || (password == null)) {
@@ -46,6 +47,7 @@ public class SecurityUser implements EntryUserDetails, CredentialsContainer {
 					"Cannot pass null or empty values to constructor");
 		}
 
+		this.userId = userId;
 		this.username = username;
 		this.password = password;
 		this.enabled = enabled;

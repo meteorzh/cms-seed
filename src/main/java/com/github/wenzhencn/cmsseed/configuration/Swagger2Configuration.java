@@ -39,7 +39,7 @@ public class Swagger2Configuration {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.apiInfo(apiInfo())
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("cn.rooomy.cdsoftware.toolplatform"))
+				.apis(RequestHandlerSelectors.basePackage("com.github.wenzhencn.cmsseed"))
 				.paths(PathSelectors.any())
 				.build();
 	}

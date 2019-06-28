@@ -12,6 +12,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface EntryUserDetails extends UserDetails {
 	
 	/**
+	 * 获取用户ID
+	 * @return
+	 */
+	Long getUserId();
+	
+	/**
 	 * 获取用户Entry信息
 	 * @return
 	 */

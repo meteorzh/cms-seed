@@ -19,8 +19,7 @@ public class ResourceObjectServiceImpl implements ResourceObjectService {
 
 	@Override
 	public ResourceObject queryByRsrcAndObj(String rsrcCode, Object rsrcObjId) {
-		// TODO Auto-generated method stub
-		return null;
+		return resourceObjectMapper.selectByRsrcAndObj(rsrcCode, rsrcObjId);
 	}
 
 }
