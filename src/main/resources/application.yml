@@ -21,6 +21,8 @@ server:
 mybatis:
   mapper-locations: 
     - classpath*:mapper/*Mapper.xml
+    - classpath:com/github/wenzhencn/cmsseed/system/mapper/*Mapper.xml
+  typeHandlersPackage: com.github.wenzhencn.cmsseed.system.mapper
 ####################
 ##PageHelper配置####
 ####################

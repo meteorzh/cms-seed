@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.github.wenzhencn.cmsseed.system.entity.EntryDO;
+import com.github.wenzhencn.cmsseed.system.model.Entry;
 import com.github.wenzhencn.cmsseed.system.security.EntryTargetType;
 
 /**
@@ -22,7 +23,7 @@ public interface EntryMapper extends BaseMapper<EntryDO> {
 	 * @param userId
 	 * @return
 	 */
-	List<EntryDO> selectByTarget(@Param("targetType") EntryTargetType targetType, @Param("targetId") Long targetId);
+	List<Entry> selectByTarget(@Param("targetType") EntryTargetType targetType, @Param("targetId") Long targetId);
 	
 	/**
 	 * 查询多个相同类型target权限
@@ -30,13 +31,13 @@ public interface EntryMapper extends BaseMapper<EntryDO> {
 	 * @param targetIds
 	 * @return
 	 */
-	List<EntryDO> selectByTargets(@Param("targetType") EntryTargetType targetType, @Param("targetIds") Collection<Long> targetIds);
+	List<Entry> selectByTargets(@Param("targetType") EntryTargetType targetType, @Param("targetIds") Collection<Long> targetIds);
 	
 	/**
 	 * 查询用户通过组获得的权限
 	 * @param userId
 	 * @return
 	 */
-	List<EntryDO> selectByUserFromGroups(@Param("userId") Long userId);
+	List<Entry> selectByUserFromGroups(@Param("userId") Long userId);
 	
 }

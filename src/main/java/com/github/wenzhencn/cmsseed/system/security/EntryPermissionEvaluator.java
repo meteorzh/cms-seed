@@ -105,7 +105,7 @@ public class EntryPermissionEvaluator implements PermissionEvaluator {
 	 */
 	private Permission resolvePermission(Object permission) {
 		if(permission instanceof Integer) {
-			return Permission.fromValue(((Integer) permission).byteValue());
+			return Permission.fromMask(((Integer) permission).byteValue());
 		} else if(permission instanceof String) {
 			return Permission.fromCode((String) permission);
 		}

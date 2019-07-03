@@ -186,26 +186,40 @@
     
     <!-- 以上为生成工具生成,支持基础方法,切勿修改 -->
     
-    <select id="selectByTarget" resultMap="baseResultMap">
+    <resultMap id="entryModelMap" type="com.github.wenzhencn.cmsseed.system.model.Entry">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="resource_id" jdbcType="INTEGER" property="resourceId" />
+		<result column="resource_code" jdbcType="VARCHAR" property="resourceCode" />
+		<result column="resource_object_id" jdbcType="BIGINT" property="resourceObjectId" />
+		<result column="mask" jdbcType="TINYINT" property="mask" />
+		<result column="level" jdbcType="TINYINT" property="level" />
+		<result column="target_type" jdbcType="TINYINT" property="targetType" />
+		<result column="target_id" jdbcType="BIGINT" property="targetId" />
+	</resultMap>
+    
+    <select id="selectByTarget" resultMap="entryModelMap">
     	SELECT
-        <include refid="allColumnList" />
-        FROM sys_entry
-        WHERE target_type = #{targetType} AND target_id = #{targetId}
+        	e.id, e.resource_id, e.resource_object_id, e.mask, e.`level`, e.target_type, e.target_id, r.`code` AS resource_code
+        FROM sys_entry e
+        LEFT JOIN sys_resource r ON r.id = e.resource_id
+        WHERE e.target_type = #{targetType} AND e.target_id = #{targetId}
     </select>
     
-    <select id="selectByTargets" resultMap="baseResultMap">
+    <select id="selectByTargets" resultMap="entryModelMap">
     	SELECT
-        <include refid="allColumnList" />
-        FROM sys_entry
-        WHERE target_type = #{targetType} AND target_id IN 
+        	e.id, e.resource_id, e.resource_object_id, e.mask, e.`level`, e.target_type, e.target_id, r.`code` AS resource_code
+        FROM sys_entry e
+        LEFT JOIN sys_resource r ON r.id = e.resource_id
+        WHERE e.target_type = #{targetType} AND e.target_id IN 
         <foreach collection="targetIds" item="targetId" open="(" close=")" separator=",">#{targetId}</foreach>
     </select>
     
-    <select id="selectByUserFromGroups" resultMap="baseResultMap">
+    <select id="selectByUserFromGroups" resultMap="entryModelMap">
     	SELECT 
-			e.id, e.resource_id, e.resource_object_id, e.mask, e.`level`, e.target_type, e.target_id
+			e.id, e.resource_id, e.resource_object_id, e.mask, e.`level`, e.target_type, e.target_id, r.`code` AS resource_code
 		FROM sys_r_user_group ug
 		INNER JOIN sys_entry e ON ug.user_id = #{userId} AND e.target_type = 2 AND e.target_id = ug.group_id
+		LEFT JOIN sys_resource r ON r.id = e.resource_id
     </select>
     
 </mapper>

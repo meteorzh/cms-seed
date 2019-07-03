@@ -5,6 +5,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.web.cors.CorsUtils;
 
 import com.github.wenzhencn.cmsseed.security.RestAccessDeniedHandler;
@@ -28,6 +29,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
+		expressionHandler.setDefaultRolePrefix(null);
+		
 		http.exceptionHandling()
 				.accessDeniedHandler(new RestAccessDeniedHandler())
 				.authenticationEntryPoint(new RestAuthenticationEntryPoint()).and()
@@ -35,6 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 //				.antMatchers("/api/**").authenticated()
 				.antMatchers("/api/**").permitAll()
+				.expressionHandler(expressionHandler)
 				.and()
 			.formLogin()
 				.loginProcessingUrl("/api/login")

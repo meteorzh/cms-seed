@@ -1,5 +1,9 @@
 package com.github.wenzhencn.cmsseed.system.entity;
 
+import com.github.wenzhencn.cmsseed.system.security.EntryLevel;
+import com.github.wenzhencn.cmsseed.system.security.EntryTargetType;
+import com.github.wenzhencn.cmsseed.system.security.Permission;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,17 +31,17 @@ public class EntryDO {
     /**
      *   权限码
      */
-    private Byte mask;
+    private Permission mask;
 
     /**
      *   权限级别
      */
-    private Byte level;
+    private EntryLevel level;
 
     /**
      *   目标类型
      */
-    private Byte targetType;
+    private EntryTargetType targetType;
 
     /**
      *   目标ID

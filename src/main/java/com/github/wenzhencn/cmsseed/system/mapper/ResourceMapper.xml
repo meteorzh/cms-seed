@@ -138,4 +138,11 @@
     
     <!-- 以上为生成工具生成,支持基础方法,切勿修改 -->
     
+    <select id="selectByCode" resultMap="baseResultMap">
+    	SELECT
+    	<include refid="allColumnList" />
+    	FROM sys_resource
+    	WHERE `code` = #{code}
+    </select>
+    
 </mapper>

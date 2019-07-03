@@ -46,7 +46,7 @@ public enum Permission {
 	 * @param mask
 	 * @return
 	 */
-	public static Permission fromValue(byte mask) {
+	public static Permission fromMask(byte mask) {
 		if(mask == 0) {
 			return null;
 		}
