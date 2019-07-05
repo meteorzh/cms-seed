@@ -24,26 +24,41 @@ import lombok.extern.slf4j.Slf4j;
 public class EntryPermissionEvaluator implements PermissionEvaluator {
 	
 	private ResourceObjectService resourceObjectService;
+	
+	public EntryPermissionEvaluator(ResourceObjectService resourceObjectService) {
+		this.resourceObjectService = resourceObjectService;
+	}
 
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-		Assert.isInstanceOf(EntryUserDetails.class, authentication, "EntryPermissionEvaluator need EntryUserDetails type authentication token");
+		Assert.isInstanceOf(EntryUserDetails.class, authentication.getPrincipal(), "EntryPermissionEvaluator need EntryUserDetails type principal");
 		Assert.isInstanceOf(String.class, targetDomainObject, "targetDomainObject must be a string in this PermissionEvaluator");
 		
-		return checkPermission((EntryUserDetails) authentication, (String) targetDomainObject, null, permission);
+		return checkPermission((EntryUserDetails) authentication.getPrincipal(), (String) targetDomainObject, null, permission);
 	}
-
+	
 	@Override
 	public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
 			Object permission) {
-		Assert.isInstanceOf(EntryUserDetails.class, authentication, "EntryPermissionEvaluator need EntryUserDetails type authentication token");
+		Assert.isInstanceOf(EntryUserDetails.class, authentication.getPrincipal(), "EntryPermissionEvaluator need EntryUserDetails type principal");
 		Assert.hasLength(targetType, "Resource type is necessary");
 		
-		return checkPermission((EntryUserDetails) authentication, targetType, targetId, permission);
+		return checkPermission((EntryUserDetails) authentication.getPrincipal(), targetType, targetId, permission);
+	}
+	
+	public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Permission permission, boolean checkOwn) {
+		Assert.isInstanceOf(EntryUserDetails.class, authentication.getPrincipal(), "EntryPermissionEvaluator need EntryUserDetails type principal");
+		Assert.hasLength(targetType, "Resource type is necessary");
+		
+		if(checkOwn) {
+			return hasPermission(authentication, targetId, targetType, permission);
+		} else {
+			return doCheckPermission((EntryUserDetails) authentication.getPrincipal(), targetType, targetId, permission, false);
+		}
 	}
 	
 	private boolean checkPermission(EntryUserDetails user, String srcType, Serializable srcId, Object permission) {
-		boolean checkRsrc = false, isOwn = false;
+		boolean isOwn = false;
 		ResourceObject rsrcObj = null;
 		if(srcId != null) {
 			rsrcObj = resourceObjectService.queryByRsrcAndObj(srcType, srcId);
@@ -51,11 +66,16 @@ public class EntryPermissionEvaluator implements PermissionEvaluator {
 				log.warn("Didn't find resource type={}, id={}", srcType, srcId);
 				return false;
 			}
-			checkRsrc = true;
 			isOwn = rsrcObj.getOwnerId().equals(user.getUserId());
 		}
-		Set<Permission> checks = resolveCheckingPermission(resolvePermission(permission), checkRsrc, isOwn);
-		Set<String> checkStrs = resolveToPermissionStrings(srcType, checks, checkRsrc, checkRsrc ? rsrcObj.getResourceObjectId() : null);
+		
+		return doCheckPermission(user, srcType, srcId, permission, isOwn);
+	}
+	
+	private boolean doCheckPermission(EntryUserDetails user, String srcType, Serializable srcId, Object permission, boolean isOwner) {
+		boolean checkRsrc = srcId != null;
+		Set<Permission> checks = resolveCheckingPermission(resolvePermission(permission), checkRsrc, isOwner);
+		Set<String> checkStrs = resolveToPermissionStrings(srcType, checks, checkRsrc, checkRsrc ? (Long) srcId : null);
 		
 		return CollectionUtils.containsAny(user.getEntrys(), checkStrs);
 	}
@@ -108,6 +128,8 @@ public class EntryPermissionEvaluator implements PermissionEvaluator {
 			return Permission.fromMask(((Integer) permission).byteValue());
 		} else if(permission instanceof String) {
 			return Permission.fromCode((String) permission);
+		} else if(permission instanceof Permission) {
+			return (Permission) permission;
 		}
 		
 		throw new IllegalArgumentException("Unsupported permission type [" + permission.getClass().getName() + "]");
