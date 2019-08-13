@@ -40,4 +40,28 @@ public interface EntryMapper extends BaseMapper<EntryDO> {
 	 */
 	List<Entry> selectByUserFromGroups(@Param("userId") Long userId);
 	
+	/**
+	 * 删除某个资源的权限配置
+	 * @param resourceId
+	 * @param resourceObjectId
+	 * @return
+	 */
+	int deleteByResource(@Param("resourceId") Integer resourceId, @Param("resourceObjectId") Long resourceObjectId);
+	
+	/**
+	 * 删除某个目标的权限
+	 * @param targetType
+	 * @param targetId
+	 * @return
+	 */
+	int deleteByTarget(@Param("targetType") byte targetType, @Param("targetId") Long targetId);
+	
+	/**
+	 * 查询权限目标具有的权限数量
+	 * @param targetType
+	 * @param targetId
+	 * @return
+	 */
+	int countByTarget(@Param("targetType") byte targetType, @Param("targetId") Long targetId);
+	
 }

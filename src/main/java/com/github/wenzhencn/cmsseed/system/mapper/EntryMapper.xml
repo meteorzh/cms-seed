@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.wenzhencn.cmsseed.system.mapper.EntryMapper">
-	<resultMap id="baseResultMap" type="com.github.wenzhencn.cmsseed.system.entity.EntryDO">
+<mapper namespace="cn.rooomy.cdsoftware.toolplatform.system.mapper.EntryMapper">
+	<resultMap id="baseResultMap" type="cn.rooomy.cdsoftware.toolplatform.system.entity.EntryDO">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="resource_id" jdbcType="INTEGER" property="resourceId" />
 		<result column="resource_object_id" jdbcType="BIGINT" property="resourceObjectId" />
@@ -186,7 +186,7 @@
     
     <!-- 以上为生成工具生成,支持基础方法,切勿修改 -->
     
-    <resultMap id="entryModelMap" type="com.github.wenzhencn.cmsseed.system.model.Entry">
+    <resultMap id="entryModelMap" type="cn.rooomy.cdsoftware.toolplatform.system.model.Entry">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="resource_id" jdbcType="INTEGER" property="resourceId" />
 		<result column="resource_code" jdbcType="VARCHAR" property="resourceCode" />
@@ -220,6 +220,20 @@
 		FROM sys_r_user_group ug
 		INNER JOIN sys_entry e ON ug.user_id = #{userId} AND e.target_type = 2 AND e.target_id = ug.group_id
 		LEFT JOIN sys_resource r ON r.id = e.resource_id
+    </select>
+    
+    <delete id="deleteByResource">
+    	DELETE FROM sys_entry
+        WHERE resource_id = #{resourceId} AND resource_object_id = #{resourceObjectId}
+    </delete>
+    
+    <delete id="deleteByTarget">
+    	DELETE FROM sys_entry
+        WHERE target_type = #{targetType} AND target_id = #{targetId}
+    </delete>
+    
+    <select id="countByTarget" resultType="Integer">
+    	SELECT COUNT(1) FROM sys_entry WHERE target_type = #{targetType} AND target_id = #{targetId}
     </select>
     
 </mapper>

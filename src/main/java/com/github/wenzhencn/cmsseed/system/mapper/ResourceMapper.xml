@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.wenzhencn.cmsseed.system.mapper.ResourceMapper">
-	<resultMap id="baseResultMap" type="com.github.wenzhencn.cmsseed.system.entity.ResourceDO">
+<mapper namespace="cn.rooomy.cdsoftware.toolplatform.system.mapper.ResourceMapper">
+	<resultMap id="baseResultMap" type="cn.rooomy.cdsoftware.toolplatform.system.entity.ResourceDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="code" jdbcType="VARCHAR" property="code" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="scope" jdbcType="VARCHAR" property="scope" />
 	</resultMap>
 	
 	<!-- 所有列 -->
 	<sql id="allColumnList">
-		id, `code`, `name`
+		id, `code`, `name`, scope
 	</sql>
 	
 	<!-- 基本列Where条件 -->
@@ -21,6 +22,9 @@
 			<if test="name != null and name != ''">
 				AND `name`=#{name}
 			</if>
+			<if test="scope != null and scope != ''">
+				AND scope=#{scope}
+			</if>
 		</trim>
     </sql>
     
@@ -31,7 +35,10 @@
                 `code`=#{code}, 
             </if>
 			<if test="name != null and name != ''">
-                `name`=#{name}
+                `name`=#{name},
+            </if>
+			<if test="scope != null and scope != ''">
+                scope=#{scope}
             </if>
 		</set>
     </sql>
@@ -42,7 +49,7 @@
 			<include refid="allColumnList" />
         )
         VALUES (
-        	#{id}, #{code}, #{name}
+        	#{id}, #{code}, #{name}, #{scope}
         )
     </insert>
     
@@ -54,7 +61,7 @@
         )
         VALUES
     	<foreach collection="list" item="itm" separator=",">
-    		(#{itm.id}, #{itm.code}, #{itm.name})
+    		(#{itm.id}, #{itm.code}, #{itm.name}, #{itm.scope})
     	</foreach>
     </insert>
     
@@ -77,7 +84,8 @@
     <update id="update" parameterType="Object">
         UPDATE sys_resource SET
 			`code`=#{code}, 
-			`name`=#{name}
+			`name`=#{name},
+			scope=#{scope}
         WHERE id = #{id}
     </update>
     
@@ -86,7 +94,8 @@
     	<foreach collection="list" item="itm" separator=";">
     		UPDATE sys_resource SET
 				`code`=#{itm.code}, 
-				`name`=#{itm.name}
+				`name`=#{itm.name},
+				scope=#{itm.scope}
 	        WHERE id = #{itm.id}
     	</foreach>
     </update>
@@ -107,7 +116,10 @@
 	                `code`=#{itm.code}, 
 	            </if>
 				<if test="itm.name != null and itm.name != ''">
-	                `name`=#{itm.name}
+	                `name`=#{itm.name},
+	            </if>
+				<if test="itm.scope != null and itm.scope != ''">
+	                scope=#{itm.scope}
 	            </if>
 			</set>
 	        WHERE id = #{itm.id}

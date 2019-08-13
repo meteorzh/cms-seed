@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.github.wenzhencn.cmsseed.system.entity.EntryDO;
 import com.github.wenzhencn.cmsseed.system.entity.RoleDO;
 import com.github.wenzhencn.cmsseed.system.mapper.EntryMapper;
 import com.github.wenzhencn.cmsseed.system.model.Entry;
@@ -26,6 +27,26 @@ public class EntryServiceImpl implements EntryService {
 	
 	@Autowired
 	private EntryMapper entryMapper;
+	
+	@Override
+	public void add(EntryDO entry) {
+		entryMapper.insert(entry);
+	}
+	
+	@Override
+	public void delete(Long entryId) {
+		entryMapper.delete(entryId);
+	}
+	
+	@Override
+	public void deleteByResource(Integer resourceId, Long resourceObjectId) {
+		entryMapper.deleteByResource(resourceId, resourceObjectId);
+	}
+	
+	@Override
+	public void deleteByTarget(EntryTargetType targetType, Long targetId) {
+		entryMapper.deleteByTarget(targetType.getValue(), targetId);
+	}
 
 	@Override
 	public List<Entry> queryByUserAll(Long userId, List<RoleDO> roles) {
@@ -66,6 +87,21 @@ public class EntryServiceImpl implements EntryService {
 			return Collections.emptyList();
 		}
 		return entryMapper.selectByTargets(EntryTargetType.ROLE, roleIds);
+	}
+	
+	@Override
+	public List<EntryDO> queryList(EntryDO query) {
+		return entryMapper.selectList(query);
+	}
+	
+	@Override
+	public EntryDO query(Long entryId) {
+		return entryMapper.select(entryId);
+	}
+	
+	@Override
+	public int countByTarget(EntryTargetType targetType, Long targetId) {
+		return entryMapper.countByTarget(targetType.getValue(), targetId);
 	}
 
 }

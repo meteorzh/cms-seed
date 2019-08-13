@@ -28,7 +28,7 @@ public class SystemServiceImpl implements SystemService {
 	private EntryService entryService;
 
 	@Override
-	public SecurityUser querySecurityUser(Long userId) {
+	public SecurityUser querySecurityUser(Long userId, String username) {
 		// 查询角色
 		List<RoleDO> roles = roleService.queryByUserAll(userId);
 		Set<GrantedAuthority> gas = roles.stream().map(role -> {
@@ -37,7 +37,7 @@ public class SystemServiceImpl implements SystemService {
 		// 查询权限
 		List<Entry> entrys = entryService.queryByUserAll(userId, roles);
 		Set<String> entryStrs = entrys.stream().map(entry -> { return entry.entryString(); }).collect(Collectors.toSet());
-		SecurityUser user = new SecurityUser(userId, "DEFAULT", "", gas, entryStrs);
+		SecurityUser user = new SecurityUser(userId, username, "", gas, entryStrs);
 		return user;
 	}
 

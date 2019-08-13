@@ -14,6 +14,6 @@ public interface SystemService {
 	 * @param userId
 	 * @return
 	 */
-	SecurityUser querySecurityUser(Long userId);
+	SecurityUser querySecurityUser(Long userId, String username);
 
 }
