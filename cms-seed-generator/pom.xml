@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.wenzhencn.cmsseed</groupId>
+		<artifactId>cms-seed</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>cms-seed-generator</artifactId>
+	<name>cms-seed-generator</name>
+	<description>CMS 代码生成模块</description>
+	
+	<dependencies>
+		<!-- Spring -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context</artifactId>
+		</dependency>
+		
+		<!-- Mybatis Plus Gen -->
+		<dependency>
+		    <groupId>com.baomidou</groupId>
+		    <artifactId>mybatis-plus-generator</artifactId>
+		</dependency>
+		
+		<!-- Velocity -->
+		<dependency>
+		    <groupId>org.apache.velocity</groupId>
+		    <artifactId>velocity-engine-core</artifactId>
+		</dependency>
+		
+		<!-- Mysql -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
+	
+</project>

@@ -1,0 +1,45 @@
+################
+##Spring配置####
+################
+spring:
+  profiles: #spring.profiles的值在使用配置中心的值是就是spring.cloud.config.profile的值
+    active: dev #这个配置在git上进行配置
+  application:
+    #注意与client中的服务器常量保持一致
+    name: cms-seed
+    
+################
+##Server配置####
+################
+server:
+  port: 8080
+  
+  
+#################
+##MyBatis配置####
+#################
+mybatis-plus:
+  mapper-locations: 
+    - classpath*:mapper/*Mapper.xml
+    - classpath:com/github/wenzhencn/cmsseed/system/mapper/*Mapper.xml
+  typeHandlersPackage: com.github.wenzhencn.cmsseed.system.typehandler
+####################
+##PageHelper配置####
+####################
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+#################
+##Swagger配置####
+#################
+swagger2: 
+  version: "@project.version@"
+    
+
+
+
+
+

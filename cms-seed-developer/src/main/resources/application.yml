@@ -1,0 +1,27 @@
+################
+##Spring配置####
+################
+spring:
+  profiles:
+    active: dev
+  application:
+    name: cms-seed-developer
+    
+################
+##Server配置####
+################
+server:
+  port: 8081
+  
+  
+#################
+##MyBatis配置####
+#################
+mybatis-plus:
+  typeHandlersPackage: com.github.wenzhencn.cmsseed.system.typehandler
+    
+
+
+
+
+

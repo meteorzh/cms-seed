@@ -1,0 +1,59 @@
+<form nz-form>
+  <div nz-row nzGutter="24">
+    <div nz-col nzSpan="6">
+      <nz-form-item nzFlex>
+        <nz-form-label>Label</nz-form-label>
+        <nz-form-control>
+          <input nz-input placeholder="label" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-form-item nzFlex>
+        <nz-form-label>Type</nz-form-label>
+        <nz-form-control>
+          <nz-select nzPlaceHolder="" nzAllowClear>
+            <nz-option *ngFor="let dictType of dictTypes" [nzLabel]="dictType" [nzValue]="dictType"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="6">
+      <button nz-button nzType="primary">Search</button>
+    </div>
+  </div>
+</form>
+<nz-table #nzTable [nzData]="page.records" [nzPageSize]="10">
+  <thead>
+    <tr>
+      <th>Label</th>
+      <th>Value</th>
+      <th>Type</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let i of nzTable.data">
+      <td>{{i.label}}</td>
+      <td>{{i.value}}</td>
+      <td>{{i.type}}</td>
+      <td>
+        <a href="#" (click)="edit(i)">Edit</a>
+        <nz-divider nzType="vertical"></nz-divider>
+        <a href="#" (click)="del(i)">Remove</a>
+        <nz-divider nzType="vertical"></nz-divider>
+        <nz-dropdown>
+          <a class="ant-dropdown-link" nz-dropdown>
+            More <i nz-icon type="down"></i>
+          </a>
+          <ul nz-menu>
+            <li nz-menu-item>
+              <a (click)="">active</a>
+            </li>
+          </ul>
+        </nz-dropdown>
+        
+      </td>
+    </tr>
+  </tbody>
+</nz-table>

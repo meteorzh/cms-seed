@@ -15,3 +15,6 @@ buildNumber.properties
 .settings
 .project
 logs
+.idea
+node_modules
+.editorconfig

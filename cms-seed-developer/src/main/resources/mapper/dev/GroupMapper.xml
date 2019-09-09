@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.wenzhencn.cmsseed.dev.mapper.GroupMapper">
+
+    <select id="countUserByGroup" resultType="java.lang.Integer">
+        SELECT COUNT(0) FROM sys_r_user_group WHERE group_id = #{groupId}
+    </select>
+
+    <select id="countGroupByRole" resultType="java.lang.Integer">
+        SELECT COUNT(0) FROM sys_r_role_group WHERE role_id = #{roleId};
+    </select>
+
+</mapper>

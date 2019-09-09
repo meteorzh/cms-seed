@@ -1,9 +1,0 @@
-#############
-##test#######
-#############
-
-swagger2: 
-  enable: true
-  title: "tool-platform API test"
-  version: "@project.version@"
-  description: "工具平台test环境接口"
