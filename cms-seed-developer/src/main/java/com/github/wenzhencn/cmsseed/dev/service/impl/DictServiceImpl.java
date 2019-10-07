@@ -66,7 +66,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, DictPO> implements 
             throw BusinessException.newInstance(CommonErrorCode.FAILED, String.format("字典条目[%d]不存在", id));
         }
         // 大于当前被删除的dict order的条目依次减1
-        List<DictPO> affects = list(new QueryWrapper<DictPO>().eq("type", exist.getType()).gt("order", exist.getOrder()));
+        List<DictPO> affects = list(new QueryWrapper<DictPO>().eq("type", exist.getType()).gt("`order`", exist.getOrder()));
         if (!CollectionUtils.isEmpty(affects)) {
             affects.forEach(affect -> affect.setOrder(affect.getOrder() - 1));
             updateBatchById(affects);
@@ -94,9 +94,9 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, DictPO> implements 
         if (icr) {
             greater = exist.getOrder();
             smaller = order;
-            affectQuery.ge("order", smaller).lt("order", greater);
+            affectQuery.ge("`order`", smaller).lt("`order`", greater);
         } else {
-            affectQuery.gt("order", smaller).le("order", greater);
+            affectQuery.gt("`order`", smaller).le("`order`", greater);
         }
         List<DictPO> affects = list(affectQuery);
         int imt = icr ? 1 : -1;

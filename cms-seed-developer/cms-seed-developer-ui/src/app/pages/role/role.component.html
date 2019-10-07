@@ -1,1 +1,91 @@
-<h2>ROLE</h2>
+<h2>角色管理</h2>
+<nz-alert nzType="warning" nzMessage="说明" nzDescription='这里只能维护系统保留的角色，即被硬编码的角色，如"系统管理员"角色'></nz-alert>
+<form nz-form [formGroup]="addForm" (ngSubmit)="submitForm(event, addForm.value)">
+    <div nz-row nzType="flex" nzAlign="middle">
+        <div nz-col nzSpan="2"><strong>New Role</strong></div>
+        <div nz-col nzSpan="6">
+            <nz-form-item nzFlex style="margin: 5px 0">
+                <nz-form-label nzRequired>Code</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="code" placeholder="code" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+            <nz-form-item nzFlex style="margin: 5px 0">
+                <nz-form-label nzRequired>Name</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="name" placeholder="name" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+            <nz-form-item nzFlex style="margin: 5px 0">
+                <nz-form-label>Description</nz-form-label>
+                <nz-form-control>
+                    <textarea nz-input formControlName="description" nzAutosize placeholder="description" style="width: 200px"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="2">
+            <button nz-button nzType="primary" [disabled]="!addForm.valid">Add</button>
+        </div>
+    </div>
+</form>
+<div style="margin-top: 10px; font-size: 1.2em"><strong>角色列表</strong></div>
+<div nz-row>
+    <div nz-col nzSpan="5">
+        <nz-input-group nzCompact nzAddOnBefore="关键字">
+          <input nz-input [(ngModel)]=" searchKey" placeholder="code or name" />
+        </nz-input-group>
+    </div>
+    <div nz-col nzSpan="2" nzOffset="1">
+        <button nz-button nzType="primary" (click)="onSearchClick($event)" [(ngModel)]="searchKey">Search</button>
+    </div>
+</div>
+<nz-table #roleTable [nzFrontPagination]="false" [nzData]="page.records" [nzLoading]="loading" [nzTotal]="page.total" 
+        [(nzPageIndex)]="pageNo" [(nzPageSize)]="pageSize" (nzPageIndexChange)="onPageChange($event)" 
+        (nzPageSizeChange)="onPageChange($event, true)">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of roleTable.data">
+            <td>
+                <ng-container *ngIf="!editCache[item.id].edit; else codeInputTpl">{{item.code}}</ng-container>
+                <ng-template #codeInputTpl>
+                    <input nz-input [(ngModel)]="editCache[item.id].data.code" />
+                </ng-template>
+            </td>
+            <td>
+                <ng-container *ngIf="!editCache[item.id].edit; else nameInputTpl">{{item.name}}</ng-container>
+                <ng-template #nameInputTpl>
+                    <input nz-input [(ngModel)]="editCache[item.id].data.name" />
+                </ng-template>
+            </td>
+            <td>
+                <ng-container *ngIf="!editCache[item.id].edit; else descInputTpl">{{item.description}}</ng-container>
+                <ng-template #descInputTpl>
+                    <textarea nz-input [(ngModel)]="editCache[item.id].data.description" nzAutosize></textarea>
+                </ng-template>
+            </td>
+            <td>
+                <ng-container *ngIf="!editCache[item.id].edit; else optActionTpl">
+                    <a (click)="startEditRow(item)">Edit</a>
+                </ng-container>
+                <ng-template #optActionTpl>
+                    <a (click)="saveRow(item)">Save</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a (click)="cancelEdit(item)">Cancel</a>
+                </ng-template>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (nzOnConfirm)="del(item)" nz-popconfirm nzPopconfirmTitle="注意：某些系统保留角色可能涉及代码的修改。确认删除这个角色吗?">Remove</a>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

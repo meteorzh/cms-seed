@@ -60,9 +60,6 @@ public class DictController {
     @DeleteMapping("/sys/dict/del/{id}")
     public CommonResponse<Object> delete(@PathVariable("id") Integer id) throws BusinessException {
         log.debug("删除字典条目: id={}", id);
-        if(dictService.getById(id) == null) {
-            return CommonResponse.newResponse(CommonErrorCode.FAILED, "字典条目不存在");
-        }
         dictService.delete(id);
         return CommonResponse.newSuccessResponse();
     }
@@ -105,10 +102,25 @@ public class DictController {
      * 查询所有字典类型
      * @return
      */
+    @GetMapping("/sys/dict/bytype/{type}")
+    public CommonResponse<List<DictPO>> queryByType(@PathVariable("type") String type) {
+        log.debug("查询某个字典类型的条目: type={}", type);
+        List<DictPO> dicts = dictService.list(new QueryWrapper<DictPO>().eq("type", type).orderByAsc("`order`"));
+        return CommonResponse.newSuccessResponse(dicts);
+    }
+
+    /**
+     * 查询所有字典类型
+     * @return
+     */
     @GetMapping("/sys/dict/types")
-    public CommonResponse<List<Object>> queryTypes() {
-        log.debug("查询所有字典类型");
-        List<Object> types = dictService.listObjs(new QueryWrapper<DictPO>().select("type").groupBy("type").orderByAsc("type"));
+    public CommonResponse<List<Object>> queryTypes(String key) {
+        log.debug("根据关键字查询字典类型: key={}", key);
+        QueryWrapper<DictPO> wrapper = new QueryWrapper<DictPO>().select("type");
+        if(!StringUtils.isEmpty(key)) {
+            wrapper.like("type", key + "%");
+        }
+        List<Object> types = dictService.listObjs(wrapper.groupBy("type").orderByAsc("type"));
         return CommonResponse.newSuccessResponse(types);
     }
 

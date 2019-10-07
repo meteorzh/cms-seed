@@ -1,1 +1,66 @@
-<h2>Group</h2>
+<h2>用户组管理</h2>
+<nz-alert nzType="warning" nzMessage="说明" nzDescription='这里只能维护系统保留的用户组，即发布系统时需要通过脚本创建的那些用户组，如"所有用户"用户组'></nz-alert>
+<form nz-form [formGroup]="addForm" (ngSubmit)="submitForm(event, addForm.value)">
+    <div nz-row nzType="flex" nzAlign="middle">
+        <div nz-col nzSpan="2"><strong>New Group</strong></div>
+        <div nz-col nzSpan="6">
+            <nz-form-item nzFlex style="margin: 5px 0">
+                <nz-form-label nzRequired>Name</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="name" placeholder="name" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+            <nz-form-item nzFlex style="margin: 5px 0">
+                <nz-form-label>Description</nz-form-label>
+                <nz-form-control>
+                    <textarea nz-input formControlName="description" nzAutosize placeholder="description" style="width: 200px"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+            <button nz-button nzType="primary" [disabled]="!addForm.valid">Add</button>
+        </div>
+    </div>
+</form>
+<div style="margin-top: 10px; font-size: 1.2em"><strong>用户组列表</strong></div>
+<nz-table #groupTable [nzFrontPagination]="false" [nzData]="page.records" [nzLoading]="loading" [nzTotal]="page.total" 
+        [(nzPageIndex)]="pageNo" [(nzPageSize)]="pageSize" (nzPageIndexChange)="onPageChange($event)" 
+        (nzPageSizeChange)="onPageChange($event, true)">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of groupTable.data">
+            <td>
+                <ng-container *ngIf="!editCache[item.id].edit; else nameInputTpl">{{item.name}}</ng-container>
+                <ng-template #nameInputTpl>
+                    <input nz-input [(ngModel)]="editCache[item.id].data.name" />
+                </ng-template>
+            </td>
+            <td>
+                <ng-container *ngIf="!editCache[item.id].edit; else descInputTpl">{{item.description}}</ng-container>
+                <ng-template #descInputTpl>
+                    <textarea nz-input [(ngModel)]="editCache[item.id].data.description" nzAutosize></textarea>
+                </ng-template>
+            </td>
+            <td>
+                <ng-container *ngIf="!editCache[item.id].edit; else optActionTpl">
+                    <a (click)="startEditRow(item)">Edit</a>
+                </ng-container>
+                <ng-template #optActionTpl>
+                    <a (click)="saveRow(item)">Save</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a (click)="cancelEdit(item)">Cancel</a>
+                </ng-template>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (nzOnConfirm)="del(item)" nz-popconfirm nzPopconfirmTitle="注意：某些系统保留用户组可能涉及代码的修改。确认删除这个角色吗?">Remove</a>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

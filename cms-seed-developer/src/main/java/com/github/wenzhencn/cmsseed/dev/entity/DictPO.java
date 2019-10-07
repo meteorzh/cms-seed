@@ -1,5 +1,6 @@
 package com.github.wenzhencn.cmsseed.dev.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -47,6 +48,7 @@ public class DictPO implements Serializable {
     /**
      * 顺序
      */
+    @TableField(value = "`order`")
     private Integer order;
 
 }
