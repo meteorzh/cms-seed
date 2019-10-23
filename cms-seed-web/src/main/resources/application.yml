@@ -7,7 +7,16 @@ spring:
   application:
     #注意与client中的服务器常量保持一致
     name: cms-seed
-    
+
+################
+##应用配置#######
+################
+app:
+  req-crypt:
+    key: VoR3ch4Lcbjs1lvBTU87logt4H0fzvR6aFKC5gigv9Y=
+    salt: X6a+DGPpNXZfOxjP2GibfQ==
+    sign-salt: X6a+DGPpNXZfOxjP2GibfbWmSnHCyVfk
+
 ################
 ##Server配置####
 ################

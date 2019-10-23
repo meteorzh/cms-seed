@@ -1,11 +1,16 @@
 package com.github.wenzhencn.cmsseed.configuration;
 
+import com.github.wenzhencn.cmsseed.filter.EncryptionFilter;
+import com.github.wenzhencn.cmsseed.filter.EncryptionProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.cors.CorsUtils;
 
 import com.github.wenzhencn.cmsseed.security.RestAccessDeniedHandler;
@@ -21,7 +26,11 @@ import com.github.wenzhencn.cmsseed.security.RestLogoutSuccessHandler;
  */
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties({ EncryptionProperties.class })
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+	@Autowired
+	private EncryptionProperties encryptionProperties;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -33,8 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticationEntryPoint(new RestAuthenticationEntryPoint()).and()
 			.authorizeRequests()
 				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//				.antMatchers("/api/**").authenticated()
-				.antMatchers("/api/**").permitAll()
+				.antMatchers("/api/**").authenticated()
+//				.antMatchers("/api/**").permitAll()
 				.expressionHandler(expressionHandler)
 				.and()
 			.formLogin()
@@ -48,6 +57,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.logout()
 				.logoutSuccessHandler(new RestLogoutSuccessHandler())
 				.permitAll();
+
+		http.addFilterBefore(new EncryptionFilter(encryptionProperties), SecurityContextPersistenceFilter.class);
 	}
 	
 	@Override

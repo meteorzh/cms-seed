@@ -1,4 +1,4 @@
-package com.github.wenzhencn.cmsseed.dev.controller;
+package com.github.wenzhencn.cmsseed.dev.generator;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.github.wenzhencn.cmsseed.common.BusinessException;
 import com.github.wenzhencn.cmsseed.common.CommonResponse;
+import com.github.wenzhencn.cmsseed.dev.generator.ext.ExtVelocityTemplateEngine;
 import com.github.wenzhencn.cmsseed.dev.model.GenerationDTO;
 import com.github.wenzhencn.cmsseed.dev.model.GroupDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +40,22 @@ public class GeneratorController {
     private DataSourceProperties dataSourceProperties;
 
     /**
+     * 获取默认代码生成配置
+     * @return
+     */
+    @GetMapping("/sys/codegen/defaultgencfg")
+    public CommonResponse<GenerationDTO> defaultGenCfg() {
+        GenerationDTO.DataSourceInfo dsi = new GenerationDTO.DataSourceInfo();
+        dsi.setDriver("com.mysql.cj.jdbc.Driver");
+        dsi.setUrl(dataSourceProperties.getUrl());
+        dsi.setUsername(dataSourceProperties.getUsername());
+        dsi.setPassword(dataSourceProperties.getPassword());
+        GenerationDTO dto = new GenerationDTO();
+        dto.setDataSourceInfo(dsi);
+        return CommonResponse.newSuccessResponse(dto);
+    }
+
+    /**
      * 生成代码接口
      * @param generation
      * @return
@@ -45,7 +63,7 @@ public class GeneratorController {
      */
     @PostMapping("/sys/codegen/gen")
     public CommonResponse<Object> generate(@Validated @RequestBody GenerationDTO generation) throws BusinessException {
-        log.debug("保存用户组: generation={}", generation);
+        log.debug("代码生成: generation={}", generation);
 
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
@@ -56,6 +74,8 @@ public class GeneratorController {
         System.out.println(gc.getOutputDir());
         gc.setAuthor(generation.getAuthor());
         gc.setOpen(false);
+        gc.setBaseColumnList(true);
+        gc.setBaseResultMap(true);
         // gc.setSwagger2(true); 实体属性 Swagger2 注解
         if (!StringUtils.isEmpty(generation.getEntitySuffix())) {
             gc.setEntityName("%s" + generation.getEntitySuffix());
@@ -64,11 +84,11 @@ public class GeneratorController {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl(dataSourceProperties.getUrl());
+        dsc.setUrl(generation.getDataSourceInfo().getUrl());
         // dsc.setSchemaName("public");
-        dsc.setDriverName("com.mysql.cj.jdbc.Driver");
-        dsc.setUsername(dataSourceProperties.getUsername());
-        dsc.setPassword(dataSourceProperties.getPassword());
+        dsc.setDriverName(generation.getDataSourceInfo().getDriver());
+        dsc.setUsername(generation.getDataSourceInfo().getUsername());
+        dsc.setPassword(generation.getDataSourceInfo().getPassword());
         mpg.setDataSource(dsc);
 
         // 包配置
@@ -89,14 +109,15 @@ public class GeneratorController {
             }
         };
 
-        // 如果模板引擎是 freemarker
-//      String templatePath = "/templates/mapper.xml.ftl";
-        // 如果模板引擎是 velocity
-        String templatePath = "/templates/mapper.xml.vm";
-
         // 自定义输出配置
         List<FileOutConfig> focList = new ArrayList<>();
         // 自定义配置会被优先输出
+        // XML模板配置
+        // 如果模板引擎是 freemarker 则模板为 "/templates/mapper.xml.ftl"
+        String templatePath = "/templates/mapper.xml.vm";
+        if (generation.isCustomMode()) {
+            templatePath = "com/github/wenzhencn/cmsseed/dev/generator/templates/mapper.xml.vm";
+        }
         focList.add(new FileOutConfig(templatePath) {
             @Override
             public String outputFile(TableInfo tableInfo) {
@@ -149,7 +170,9 @@ public class GeneratorController {
             strategy.setTablePrefix(generation.getTableNamePrefix());
         }
         mpg.setStrategy(strategy);
-//        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
+        if (generation.isCustomMode()) {
+            mpg.setTemplateEngine(new ExtVelocityTemplateEngine());
+        }
         mpg.execute();
 
         return CommonResponse.newSuccessResponse();

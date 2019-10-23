@@ -48,6 +48,38 @@
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
+                        <nz-form-control nzSpan="18">
+                            <nz-collapse>
+                                <nz-collapse-panel nzHeader="数据源配置" nzActive="false">
+                                    <nz-form-item>
+                                        <nz-form-label nzSpan="6" nzRequired>URL</nz-form-label>
+                                        <nz-form-control nzSpan="12">
+                                            <input nz-input formControlName="url" placeholder="数据库连接" />
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label nzSpan="6" nzRequired>Driver</nz-form-label>
+                                        <nz-form-control nzSpan="12">
+                                            <input nz-input formControlName="driver" placeholder="数据库驱动" />
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label nzSpan="6" nzRequired>Username</nz-form-label>
+                                        <nz-form-control nzSpan="12">
+                                            <input nz-input formControlName="username" placeholder="数据库用户名" />
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label nzSpan="6" nzRequired>Password</nz-form-label>
+                                        <nz-form-control nzSpan="12">
+                                            <input nz-input formControlName="password" placeholder="数据库密码" />
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </nz-collapse-panel>
+                            </nz-collapse>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
                         <nz-form-control nzOffset="6" nzSpan="4">
                             <button nz-button nzType="primary" [disabled]="!genForm.valid">生成代码</button>
                         </nz-form-control>

@@ -51,4 +51,51 @@ public class GenerationDTO {
      */
 	private String tableNamePrefix;
 
+    /**
+     * 是否使用自定义模式(自定义模板文件)
+     */
+	private boolean customMode;
+
+    /**
+     * 数据源信息
+     */
+    @NotNull
+	private DataSourceInfo dataSourceInfo;
+
+    /**
+     * 数据源配置
+     * @author wenzhen
+     * @Description
+     * @Date: 2019-10-23 15:35:57
+     */
+	@Data
+	public static class DataSourceInfo {
+
+        /**
+         * URL
+         */
+	    private String url;
+
+        /**
+         * 驱动类
+         */
+	    private String driver;
+
+        /**
+         * 用户名
+         */
+	    private String username;
+
+        /**
+         * 密码
+         */
+	    private String password;
+
+        /**
+         * PostgreSQL SchemeName
+         */
+	    private String schemeName;
+
+    }
+
 }
