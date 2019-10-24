@@ -28,6 +28,7 @@ public class ExtVelocityTemplateEngine extends VelocityTemplateEngine {
                 mainFields.add(f);
             }
         });
+        mainFields.addAll(tableInfo.getCommonFields());
         map.put("extKeyFields", keyFields);
         map.put("extMainFields", mainFields);
         return map;

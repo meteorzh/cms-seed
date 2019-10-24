@@ -18,4 +18,4 @@ logs
 .idea
 node_modules
 .editorconfig
-.iml
+*.iml
