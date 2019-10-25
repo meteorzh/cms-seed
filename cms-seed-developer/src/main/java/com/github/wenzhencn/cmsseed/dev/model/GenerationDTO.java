@@ -52,9 +52,9 @@ public class GenerationDTO {
 	private String tableNamePrefix;
 
     /**
-     * 是否使用自定义模式(自定义模板文件)
+     * 使用的模板标识
      */
-	private boolean customMode;
+	private String template;
 
     /**
      * 数据源信息

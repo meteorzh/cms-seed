@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+
+#if(${enableCache})
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+#end
+#if(${baseResultMap})
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+        #foreach($field in ${extKeyFields})##生成主键排在第一位
+        <id column="${field.name}" property="${field.propertyName}" />
+        #end
+        #foreach($field in ${extMainFields})##生成普通字段
+        <result column="${field.name}" property="${field.propertyName}" />
+        #end
+    </resultMap>
+#end
+
+#if(${baseColumnList})
+    <!-- 所有结果列 -->
+    <sql id="allColumnList">
+        ${table.fieldNames}##
+    #if(${table.fields.size()} > 0 && ${table.commonFields.size()} > 0)
+, ##
+    #end
+    #foreach($field in ${table.commonFields})
+${field.name}##
+        #if($foreach.hasNext())
+, ##
+        #end
+    #end
+
+    </sql>
+
+    <!-- 非主键结果列 -->
+    <sql id="baseColumnList">
+        ##
+    #foreach($field in ${extMainFields})
+${field.name}#if($foreach.hasNext()), #end##
+    #end
+
+    </sql>
+
+    <!-- 通用赋值结果列 -->
+    <sql id="baseValueList">
+        ##
+    #foreach($field in ${extMainFields})
+#{${field.propertyName}}#if($foreach.hasNext()), #end##
+    #end
+
+    </sql>
+#end
+
+    <sql id="pkWhereClause">
+        WHERE ##
+#if(${extKeyFields.size()} > 1)
+    #foreach($field in ${extKeyFields})
+${field.name} = #{pks[$foreach.index]}#if($foreach.hasNext()) AND #end##
+    #end
+
+#else
+${extKeyFields.get(0).name} = #{pk}
+#end
+    </sql>
+
+    <sql id="baseWhereClause">
+        <trim prefix="WHERE" prefixOverrides="AND">
+            #foreach($field in ${extMainFields})
+            <if test="${field.propertyName} != null#if(${field.getColumnType().getType()} == "String") AND ${field.propertyName} != ''#end">
+                AND ${field.name} = #{${field.propertyName}}
+            </if>
+            #end
+        </trim>
+    </sql>
+
+    <sql id="selectiveSetClause">
+        <trim prefix="SET" suffixOverrides=",">
+            #foreach($field in ${extMainFields})
+            <if test="${field.propertyName} != null">
+                ${field.name} = #{${field.propertyName}},
+            </if>
+            #end
+        </trim>
+    </sql>
+
+    <insert id="insert" parameterType="Object">
+        INSERT INTO ${table.name} (
+            <include refid="baseColumnList" />
+        ) VALUES (
+            <include refid="baseValueList" />
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE ${table.name}
+        SET ##
+        #foreach($field in ${extMainFields})
+${field.name} = #{${field.propertyName}}##
+            #if($foreach.hasNext())
+, ##
+            #end
+        #end
+
+        <include refid="pkWhereClause" />
+    </update>
+
+    <update id="updateBySelective" parameterType="Object">
+        UPDATE ${table.name}
+        <include refid="selectiveSetClause" />
+        <include refid="pkWhereClause" />
+    </update>
+
+    <delete id="delete">
+        DELETE FROM ${table.name}
+        <include refid="pkWhereClause" />
+    </delete>
+
+    <select id="queryCount" resultType="int">
+        SELECT COUNT(0)
+        FROM ${table.name}
+        <include refid="baseWhereClause" />
+    </select>
+
+    <select id="queryList" parameterType="Object" resultMap="baseResultMap">
+        SELECT
+        <include refid="allColumnList" />
+        FROM ${table.name}
+        <include refid="baseWhereClause" />
+    </select>
+
+    <select id="queryById" resultMap="baseResultMap">
+        SELECT
+        <include refid="allColumnList" />
+        FROM ${table.name}
+        <include refid="pkWhereClause" />
+    </select>
+
+    <select id="queryUniqueResult" resultMap="baseResultMap">
+        SELECT
+        <include refid="allColumnList" />
+        FROM ${table.name}
+        <include refid="baseWhereClause" />
+    </select>
+
+    <!-- 以上为生成工具生成, 请勿修改 -->
+
+</mapper>

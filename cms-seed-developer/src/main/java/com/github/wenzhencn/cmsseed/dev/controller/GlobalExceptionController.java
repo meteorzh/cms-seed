@@ -52,6 +52,7 @@ public class GlobalExceptionController {
 	@ExceptionHandler(value = Exception.class)
 	public CommonResponse<Object> exceptionHandler(HttpServletRequest request, Exception e) {
 		log.error(e.getMessage());
+		e.printStackTrace();
 		return CommonResponse.newFailedResponse(e.getMessage());
 	}
 

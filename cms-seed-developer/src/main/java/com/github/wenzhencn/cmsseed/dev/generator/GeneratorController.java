@@ -1,16 +1,15 @@
 package com.github.wenzhencn.cmsseed.dev.generator;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.generator.AutoGenerator;
-import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.github.wenzhencn.cmsseed.common.BusinessException;
 import com.github.wenzhencn.cmsseed.common.CommonResponse;
+import com.github.wenzhencn.cmsseed.dev.generator.ext.ExtGenerator;
+import com.github.wenzhencn.cmsseed.dev.generator.ext.ExtInjectionConfig;
 import com.github.wenzhencn.cmsseed.dev.generator.ext.ExtVelocityTemplateEngine;
 import com.github.wenzhencn.cmsseed.dev.model.GenerationDTO;
-import com.github.wenzhencn.cmsseed.dev.model.GroupDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -39,6 +38,14 @@ public class GeneratorController {
     @Autowired
     private DataSourceProperties dataSourceProperties;
 
+    // TODO 保存数据源
+
+    // TODO 删除数据源
+
+    // TODO 获取数据源列表
+
+    // TODO 获取模板列表
+
     /**
      * 获取默认代码生成配置
      * @return
@@ -66,7 +73,7 @@ public class GeneratorController {
         log.debug("代码生成: generation={}", generation);
 
         // 代码生成器
-        AutoGenerator mpg = new AutoGenerator();
+        ExtGenerator mpg = new ExtGenerator();
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
@@ -102,7 +109,7 @@ public class GeneratorController {
         mpg.setPackageInfo(pc);
 
         // 自定义配置
-        InjectionConfig cfg = new InjectionConfig() {
+        ExtInjectionConfig cfg = new ExtInjectionConfig() {
             @Override
             public void initMap() {
                 // to do nothing
@@ -115,8 +122,8 @@ public class GeneratorController {
         // XML模板配置
         // 如果模板引擎是 freemarker 则模板为 "/templates/mapper.xml.ftl"
         String templatePath = "/templates/mapper.xml.vm";
-        if (generation.isCustomMode()) {
-            templatePath = "com/github/wenzhencn/cmsseed/dev/generator/templates/mapper.xml.vm";
+        if (!StringUtils.isEmpty(generation.getTemplate())) {
+            templatePath = "com/github/wenzhencn/cmsseed/dev/generator/templates/" + generation.getTemplate() + "/mapper.xml.vm";
         }
         focList.add(new FileOutConfig(templatePath) {
             @Override
@@ -138,7 +145,7 @@ public class GeneratorController {
          * return false; } });
          */
         cfg.setFileOutConfigList(focList);
-        mpg.setCfg(cfg);
+        mpg.setExtCfg(cfg);
 
         // 配置模板
         TemplateConfig templateConfig = new TemplateConfig();
@@ -170,9 +177,7 @@ public class GeneratorController {
             strategy.setTablePrefix(generation.getTableNamePrefix());
         }
         mpg.setStrategy(strategy);
-        if (generation.isCustomMode()) {
-            mpg.setTemplateEngine(new ExtVelocityTemplateEngine());
-        }
+        mpg.setExtTemplateEngine(new ExtVelocityTemplateEngine());
         mpg.execute();
 
         return CommonResponse.newSuccessResponse();
