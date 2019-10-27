@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse, HttpRequest, HttpParams, HttpResponse, HttpEventType } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from "rxjs/operators";
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpRequest, HttpParams, HttpResponse, HttpEventType, HttpEvent } from '@angular/common/http';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, map } from "rxjs/operators";
 import { CommonResponse, CommonErrorCode } from './common';
 import { NzMessageService } from 'ng-zorro-antd';
-import { BaseService, ServeCtx } from './base.service';
+import { BaseService, ServeCtx, ServeObserver } from './base.service';
 import { Router } from '@angular/router';
 
 /**
@@ -59,10 +59,10 @@ export abstract class BaseHttpService implements BaseService {
     /**
      * 执行请求
      */
-    private request(req: HttpRequest<any>, ctx: ServeCtx) {
+    private request(req: HttpRequest<CommonResponse>, ctx: ServeCtx) {
         this.http.request<CommonResponse>(req).pipe(
             catchError(this.handleNetError)
-        ).subscribe((resp: HttpResponse<any>) => {
+        ).subscribe((resp: HttpResponse<CommonResponse>) => {
             // 此处 resp 为整个 HttpResponse
             // 根据 resp.type 判断当前请求处于什么阶段
             if(resp.type == HttpEventType.Response) {
@@ -78,8 +78,12 @@ export abstract class BaseHttpService implements BaseService {
         });
     }
 
-    // 处理网络错误
-    private handleNetError(error: HttpErrorResponse) {
+    /**
+     * 处理错误
+     * 本方法仅对错误进行了一次封装
+     * @param error 
+     */
+    private handleNetError(error: HttpErrorResponse): Observable<never> {
         if (error.error instanceof ErrorEvent) {
             // A client-side or network error occurred. Handle it accordingly.
             console.error('An error occurred:', error.error.message);
@@ -152,4 +156,30 @@ export interface PostParam extends BaseHttpRequestParam {
 // DeleteParam POST请求参数
 export interface DeleteParam extends BaseHttpRequestParam {
     body?: any;
+}
+
+/**
+ * HTTP 服务观察者
+ */
+export class HttpRequestObserver<T> extends ServeObserver<HttpEvent<T>> {
+
+    handleResponse: (body: T) => {};
+
+    constructor(protected messageService: NzMessageService) {
+        super(messageService);
+        this.next = this.defaultNext;
+    }
+
+    private defaultNext(value: HttpEvent<T>) {
+        console.log(value);
+        // 此处 resp 为整个 HttpResponse
+        // 根据 resp.type 判断当前请求处于什么阶段
+        if(value.type == HttpEventType.Response) {
+            // 请求已到达响应阶段, 处理后台响应
+            if (this.handleResponse) {
+                this.handleResponse(value.body);
+            }
+        }
+    }
+
 }
