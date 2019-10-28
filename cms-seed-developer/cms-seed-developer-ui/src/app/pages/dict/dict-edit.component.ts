@@ -5,6 +5,8 @@ import { MultiModeComponent, CurrentState, CURRENT_DEFAULT } from 'src/app/commo
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DictService } from './dict.service';
 import { switchMap } from 'rxjs/operators';
+import { CommonObserver } from 'src/app/common/base-http.service';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
     selector: 'app-dict-edit',
@@ -23,7 +25,7 @@ export class DictEditComponent extends MultiModeComponent implements OnInit {
 
     dictEditForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private router: Router, private aroute: ActivatedRoute, private dictService: DictService) {
+    constructor(private fb: FormBuilder, private router: Router, private messageService: NzMessageService, private aroute: ActivatedRoute, private dictService: DictService) {
         super(CURRENT_DEFAULT.mode);
         this.dict = CURRENT_DEFAULT.data;
     }
@@ -31,11 +33,12 @@ export class DictEditComponent extends MultiModeComponent implements OnInit {
     ngOnInit(): void {
         if(this.isCreate) {
             // 查询 dictTypes
-            this.dictService.queryTypes(null, {
-                success: resp => {
+            this.dictService.queryTypes(null).subscribe(new CommonObserver(
+                this.router, this.messageService,
+                resp => {
                     this.dictTypes = resp.data;
                 }
-            });
+            ));
             this.aroute.queryParams.subscribe(queryParams => {
                 this.initForm(queryParams.type);
             });
@@ -79,18 +82,19 @@ export class DictEditComponent extends MultiModeComponent implements OnInit {
             obj.id = this.dict.id;
             obj.type = this.dict.type;
         }
-        this.dictService.save(obj, {
-            success: resp => {
+        this.dictService.save(obj).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 console.log("保存成功");
                 this.dictEditForm.reset();
-                this.dictService.queryTypes(null, {
-                    success: resp => {
+                this.dictService.queryTypes(null).subscribe(new CommonObserver(
+                    this.router, this.messageService,
+                    resp => {
                         this.dictTypes = resp.data;
                     }
-                });
-            },
-            showSuccessMsg: true
-        });
+                ));
+            }
+        ));
     }
 
     back(event: Event) {

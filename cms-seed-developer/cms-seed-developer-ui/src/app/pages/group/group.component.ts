@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { GroupService } from './group.service';
+import { CommonObserver } from 'src/app/common/base-http.service';
+import { Router } from '@angular/router';
+import { NzMessageService } from 'ng-zorro-antd';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-group',
@@ -21,7 +25,8 @@ export class GroupComponent implements OnInit {
 
     editCache: { [key: string]: any } = {};
 
-    constructor(private fb: FormBuilder, private groupService: GroupService) { }
+    constructor(private fb: FormBuilder, private groupService: GroupService,
+                private router: Router, private messageService: NzMessageService) { }
 
     ngOnInit() {
         this.addForm = this.fb.group({
@@ -32,22 +37,23 @@ export class GroupComponent implements OnInit {
     }
 
     submitForm(event: any, value: any) {
-        this.groupService.save(value, {
-            success: resp => {
+        this.groupService.save(value).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.onPageChange(null);
                 this.addForm.reset();
-            },
-            showSuccessMsg: true
-        });
+            }, true
+        ));
     }
 
     onPageChange(event: any, reset?: boolean) {
-        this.groupService.page(this.pageNo, this.pageSize, {
-            success: resp => {
+        this.groupService.page(this.pageNo, this.pageSize).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.page = resp.data;
                 this.updateEditCache();
             }
-        });
+        ));
     }
 
     startEditRow(group: any) {
@@ -55,15 +61,15 @@ export class GroupComponent implements OnInit {
     }
 
     saveRow(group: any) {
-        this.groupService.save(this.editCache[group.id].data, {
-            success: resp => {
+        this.groupService.save(this.editCache[group.id].data).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 let data = this.editCache[group.id].data;
                 group.name = data.name;
                 group.description = data.description;
                 this.editCache[group.id].edit = false;
-            },
-            showSuccessMsg: true
-        });
+            }
+        ));
     }
 
     cancelEdit(group: any) {
@@ -72,11 +78,12 @@ export class GroupComponent implements OnInit {
     }
 
     del(group: any) {
-        this.groupService.del(group.id, {
-            success: resp => {
+        this.groupService.del(group.id).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.onPageChange(null);
-            }
-        });
+            }, true
+        ));
     }
 
     private updateEditCache() {

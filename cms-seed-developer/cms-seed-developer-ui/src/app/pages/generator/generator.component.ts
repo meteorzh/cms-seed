@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GeneratorService } from './generator.service';
+import { Router } from '@angular/router';
+import { NzMessageService } from 'ng-zorro-antd';
+import { CommonObserver } from 'src/app/common/base-http.service';
 
 @Component({
     selector: 'app-generator',
@@ -11,12 +14,14 @@ export class GeneratorComponent implements OnInit {
 
     genForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private generatorService: GeneratorService) { }
+    constructor(private fb: FormBuilder, private generatorService: GeneratorService,
+                private router: Router, private messageService: NzMessageService) { }
 
     ngOnInit() {
         // 查询默认配置
-        this.generatorService.defaultGenCfg({
-            success: resp => {
+        this.generatorService.defaultGenCfg().subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.genForm = this.fb.group({
                     projectPath: ["", [Validators.required]],
                     author: [],
@@ -32,7 +37,7 @@ export class GeneratorComponent implements OnInit {
                     password: [resp.data.dataSourceInfo.password, [Validators.required]]
                 });
             }
-        });
+        ));
         this.genForm = this.fb.group({
             projectPath: ["", [Validators.required]],
             author: [],
@@ -66,9 +71,9 @@ export class GeneratorComponent implements OnInit {
                 password: value.password
             }
         };
-        this.generatorService.generate(param, {
-            showSuccessMsg: true
-        })
+        this.generatorService.generate(param).subscribe(new CommonObserver(
+            this.router, this.messageService, null, true
+        ));
     }
 
 }

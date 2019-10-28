@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BaseHttpService } from 'src/app/common/base-http.service';
 import { CommonResponse } from 'src/app/common/common';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders, HttpEvent } from '@angular/common/http';
 import { NzMessageService } from 'ng-zorro-antd';
 import { ServeCtx } from 'src/app/common/base.service';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 /**
  * 字典条目服务
@@ -12,35 +13,35 @@ import { Router } from '@angular/router';
 @Injectable()
 export class DictService extends BaseHttpService {
 
-    constructor(protected http: HttpClient, protected router: Router, protected messageService: NzMessageService) {
-        super(http, router, messageService);
+    constructor(http: HttpClient) {
+        super(http);
     }
 
-    save(dict: any, ctx: ServeCtx) {
-        this.post({ url: "/api/sys/dict/save", body: dict }, ctx);
+    save(dict: any): Observable<HttpEvent<CommonResponse>> {
+        return this.post({ url: "/api/sys/dict/save", body: dict });
     }
 
-    del(id: number, ctx: ServeCtx) {
-        super.delete({ url: "/api/sys/dict/del/" + id }, ctx);
+    del(id: number): Observable<HttpEvent<CommonResponse>> {
+        return super.delete({ url: "/api/sys/dict/del/" + id });
     }
 
-    reorder(id: number, order: number, ctx: ServeCtx) {
+    reorder(id: number, order: number): Observable<HttpEvent<CommonResponse>> {
         let headers: HttpHeaders = new HttpHeaders({ "Content-type": "application/x-www-form-urlencoded" });
         let body: HttpParams = new HttpParams({ fromObject: {"id": id.toString(), "order": order.toString()} });
-        super.post({ url: "/api/sys/dict/reorder", headers: headers, body: body }, ctx);
+        return super.post({ url: "/api/sys/dict/reorder", headers: headers, body: body });
     }
 
-    page(params: any, ctx: ServeCtx) {
+    page(params: any): Observable<HttpEvent<CommonResponse>> {
         let querys: HttpParams = new HttpParams({ fromObject: params });
-        this.get({ url: "/api/sys/dict/page", params: querys }, ctx);
+        return this.get({ url: "/api/sys/dict/page", params: querys });
     }
 
-    queryByType(type: string, ctx: ServeCtx) {
-        this.get({ url: "/api/sys/dict/bytype/" + type }, ctx);
+    queryByType(type: string): Observable<HttpEvent<CommonResponse>> {
+        return this.get({ url: "/api/sys/dict/bytype/" + type });
     }
 
     // 查询所有字典类型
-    queryTypes(key: string, ctx: ServeCtx) {
+    queryTypes(key: string): Observable<HttpEvent<CommonResponse>> {
         let querys: HttpParams = null;
         if(key == null) {
             querys = new HttpParams();
@@ -48,7 +49,7 @@ export class DictService extends BaseHttpService {
             new HttpParams({fromObject: {"key": key}})
         }
         
-        this.get({ url: "/api/sys/dict/types", params: querys }, ctx);
+        return this.get({ url: "/api/sys/dict/types", params: querys });
     }
 
 }
