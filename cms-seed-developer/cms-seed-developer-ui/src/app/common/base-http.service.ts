@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
  */
 export abstract class BaseHttpService implements BaseService {
 
-    constructor(protected http: HttpClient, protected router: Router, protected messageService: NzMessageService) { }
+    constructor(protected http: HttpClient) { }
 
     /**
      * GET 请求
@@ -22,10 +22,10 @@ export abstract class BaseHttpService implements BaseService {
      * @param success 
      * @param failed 
      */
-    get(params: GetParam, ctx: ServeCtx) {
+    get(params: GetParam): Observable<HttpEvent<CommonResponse>> {
         let init: HttpRequestInit = { headers: params.headers, params: params.params };
         let req: HttpRequest<any> = new HttpRequest("GET", params.url, init);
-        this.request(req, ctx);
+        return this.request(req);
     }
 
     /**
@@ -36,10 +36,10 @@ export abstract class BaseHttpService implements BaseService {
      * @param success 
      * @param failed 
      */
-    post(params: PostParam, ctx: ServeCtx) {
+    post(params: PostParam): Observable<HttpEvent<CommonResponse>> {
         let init: HttpRequestInit = { headers: params.headers };
         let req: HttpRequest<any> = new HttpRequest("POST", params.url, params.body, init);
-        this.request(req, ctx);
+        return this.request(req);
     }
 
     /**
@@ -50,32 +50,19 @@ export abstract class BaseHttpService implements BaseService {
      * @param success 
      * @param failed 
      */
-    delete(params: DeleteParam, ctx: ServeCtx) {
+    delete(params: DeleteParam): Observable<HttpEvent<CommonResponse>> {
         let init: HttpRequestInit = { headers: params.headers, params: params.params };
         let req: HttpRequest<any> = new HttpRequest("DELETE", params.url, init);
-        this.request(req, ctx);
+        return this.request(req);
     }
 
     /**
      * 执行请求
      */
-    private request(req: HttpRequest<CommonResponse>, ctx: ServeCtx) {
-        this.http.request<CommonResponse>(req).pipe(
+    private request(req: HttpRequest<any>): Observable<HttpEvent<CommonResponse>> {
+        return this.http.request<CommonResponse>(req).pipe(
             catchError(this.handleNetError)
-        ).subscribe((resp: HttpResponse<CommonResponse>) => {
-            // 此处 resp 为整个 HttpResponse
-            // 根据 resp.type 判断当前请求处于什么阶段
-            if(resp.type == HttpEventType.Response) {
-                console.log(resp);
-                // 请求已到达响应阶段, 处理后台响应
-                this.handleResponseBody(resp.body, ctx);
-            }
-        }, error => {
-            console.log("请求失败", error);
-            this.messageService.error(error);
-        }, () => {
-            console.log("请求完成");
-        });
+        );
     }
 
     /**
@@ -93,36 +80,6 @@ export abstract class BaseHttpService implements BaseService {
             console.error(`Backend returned code ${error.status}, ` + `body was: ${error.error}`);
         }
         return throwError('Something bad happened; please try again later.');
-    }
-
-    private handleResponseBody(resp: CommonResponse, ctx: ServeCtx) {
-        if(resp.code == CommonErrorCode.SUCCESS) {
-            // 执行自定义处理
-            if(ctx.success) {
-                ctx.success(resp);
-            }
-            if(ctx.showSuccessMsg) {
-                this.messageService.success("操作成功");
-            }
-        } else {
-            // 业务失败
-            this.handleBusinessError(resp, ctx.showFailedMsg == undefined ? true : ctx.showFailedMsg, ctx.failed);
-        }
-    }
-
-    private handleBusinessError(resp: CommonResponse, showFailedMsg: boolean, failed?: (result: CommonResponse) => void) {
-        // 失败类型，比如未登录，跳转到登录等
-        if(resp.code == CommonErrorCode.AT_NOT_AUTHC) {
-            // 跳转登录
-            this.router.navigate(['/login']);
-        }
-        // 执行自定义处理
-        if(failed) {
-            failed(resp);
-        }
-        if(showFailedMsg) {
-            this.messageService.error(resp.message);
-        }
     }
 
 }
@@ -160,14 +117,15 @@ export interface DeleteParam extends BaseHttpRequestParam {
 
 /**
  * HTTP 服务观察者
+ * 如果此类构造参数指定了customNext, 那么本类的 defaultNext 方法将不会被执行
  */
 export class HttpRequestObserver<T> extends ServeObserver<HttpEvent<T>> {
 
-    handleResponse: (body: T) => {};
-
-    constructor(protected messageService: NzMessageService) {
-        super(messageService);
-        this.next = this.defaultNext;
+    constructor(next?: (value: HttpEvent<T>) => void, error?: (err: any) => void, complete?: () => void) {
+        super(next, error, complete);
+        if (this.next == null) {
+            this.next = this.defaultNext;
+        }
     }
 
     private defaultNext(value: HttpEvent<T>) {
@@ -176,9 +134,64 @@ export class HttpRequestObserver<T> extends ServeObserver<HttpEvent<T>> {
         // 根据 resp.type 判断当前请求处于什么阶段
         if(value.type == HttpEventType.Response) {
             // 请求已到达响应阶段, 处理后台响应
-            if (this.handleResponse) {
-                this.handleResponse(value.body);
+            this.handleResponse(value);
+        }
+    }
+
+    protected handleResponse(resp: HttpResponse<T>): void {
+        console.warn("default implement of HttpRequestObserver");
+    }
+
+}
+
+/**
+ * 通用 Http 请求观察者对象
+ */
+export class CommonObserver extends HttpRequestObserver<CommonResponse> {
+
+    constructor(private router: Router, private messageService: NzMessageService,
+                private success?: (result: CommonResponse) => void, private showSuccessMsg?: boolean,
+                private failed?: (result: CommonResponse) => void, private showFailedMsg?: boolean) {
+        super();
+        this.error = this.commonError;
+        if (this.showFailedMsg == null) {
+            this.showFailedMsg = true;
+        }
+    }
+
+    private commonError(err: any): void {
+        console.error(err);
+        this.messageService.error(err);
+    }
+
+    protected handleResponse(resp: HttpResponse<CommonResponse>): void {
+        let body = resp.body;
+        if(body.code == CommonErrorCode.SUCCESS) {
+            // 执行自定义处理
+            if(this.success != null) {
+                this.success(body);
             }
+            if(this.showSuccessMsg) {
+                this.messageService.success("操作成功");
+            }
+        } else {
+            // 业务失败
+            this.handleFailedResponse(body);
+        }
+    }
+
+    private handleFailedResponse(resp: CommonResponse) {
+        // 失败类型，比如未登录，跳转到登录等
+        if(resp.code == CommonErrorCode.AT_NOT_AUTHC) {
+            // 跳转登录
+            this.router.navigate(['/login']);
+        }
+        // 执行自定义处理
+        if(this.failed != null) {
+            this.failed(resp);
+        }
+        if(this.showFailedMsg) {
+            this.messageService.error(resp.message);
         }
     }
 

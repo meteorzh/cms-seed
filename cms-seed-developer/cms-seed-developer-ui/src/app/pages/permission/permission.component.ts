@@ -5,6 +5,8 @@ import { PermissionService } from './permission.service';
 import { Router } from '@angular/router';
 import { CURRENT_DEFAULT } from 'src/app/common/multi-mode.component';
 import { ComponentMode } from 'src/app/common/common';
+import { CommonObserver } from 'src/app/common/base-http.service';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
     selector: 'app-permission',
@@ -25,35 +27,39 @@ export class PermissionComponent implements OnInit {
 
     pageSize: number = 10;
 
-    constructor(private dictService: DictService, private fb: FormBuilder, private pmsService: PermissionService, private router: Router) { }
+    constructor(private dictService: DictService, private fb: FormBuilder, private pmsService: PermissionService, 
+                private router: Router, private messageService: NzMessageService) { }
 
     ngOnInit() {
-        this.dictService.queryByType("PMS_CATEGORY", {
-            success: resp => {
+        this.dictService.queryByType("PMS_CATEGORY").subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.categorys = resp.data;
             }
-        });
+        ));
         this.searchForm = this.fb.group({
             key: [],
             category: []
         });
-        this.pmsService.page(this.pageNo, this.pageSize, null, null, {
-            success: resp => {
+        this.pmsService.page(this.pageNo, this.pageSize, null, null).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.page = resp.data;
                 this.loading = false;
             }
-        });
+        ));
     }
 
     submitForm(event: any, value: any) {
         console.log(value);
         this.loading = true;
-        this.pmsService.page(this.pageNo, this.pageSize, value.key, value.category, {
-            success: resp => {
+        this.pmsService.page(this.pageNo, this.pageSize, value.key, value.category).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.page = resp.data;
                 this.loading = false;
             }
-        });
+        ));
     }
 
     onAddClick(event: Event) {
@@ -66,12 +72,13 @@ export class PermissionComponent implements OnInit {
             this.pageNo = 1;
         }
         this.loading = true;
-        this.pmsService.page(this.pageNo, this.pageSize, null, null, {
-            success: resp => {
+        this.pmsService.page(this.pageNo, this.pageSize, null, null).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.page = resp.data;
                 this.loading = false;
             }
-        });
+        ));
     }
 
     onEditClick(pms: any) {
@@ -81,12 +88,12 @@ export class PermissionComponent implements OnInit {
     }
 
     del(pms: any) {
-        this.pmsService.del(pms.id, {
-            success: resp => {
+        this.pmsService.del(pms.id).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.onPageChange(null, true);
-            },
-            showSuccessMsg: true
-        });
+            }
+        ));
     }
 
 }

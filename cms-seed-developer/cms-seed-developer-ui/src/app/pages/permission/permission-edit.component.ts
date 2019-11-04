@@ -4,6 +4,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { PermissionService } from './permission.service';
 import { DictService } from '../dict/dict.service';
 import { Router } from '@angular/router';
+import { CommonObserver } from 'src/app/common/base-http.service';
+import { NzMessageBaseService, NzMessageService } from 'ng-zorro-antd';
 
 @Component({
     selector: 'app-permission-edit',
@@ -19,7 +21,7 @@ export class PermissionEditComponent extends MultiModeComponent implements OnIni
     categorys: Array<any> = [];
 
     constructor(private fb: FormBuilder, private pmsService: PermissionService, 
-            private dictService: DictService, private router: Router) {
+            private dictService: DictService, private router: Router, private messageService: NzMessageService) {
         super(CURRENT_DEFAULT.mode);
         if(!this.isCreate) {
             this.pms = CURRENT_DEFAULT.data;
@@ -27,11 +29,12 @@ export class PermissionEditComponent extends MultiModeComponent implements OnIni
     }
 
     ngOnInit(): void {
-        this.dictService.queryByType("PMS_CATEGORY", {
-            success: resp => {
+        this.dictService.queryByType("PMS_CATEGORY").subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.categorys = resp.data;
             }
-        });
+        ));
         this.pmsForm = this.fb.group({
             code: [{value: this.isCreate ? '' : this.pms.code, disabled: !this.isCreate}, this.isCreate ? [Validators.required] : []],
             label: [{value: this.isCreate ? '' : this.pms.label, disabled: this.isView}, this.isView ? [] : [Validators.required]],
@@ -45,15 +48,15 @@ export class PermissionEditComponent extends MultiModeComponent implements OnIni
             value.id = this.pms.id;
             value.code = this.pms.code;
         }
-        this.pmsService.save(value, {
-            success: resp => {
+        this.pmsService.save(value).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.pmsForm.reset();
                 if(this.isEdit) {
                     this.router.navigate(['/permission'])
                 }
-            },
-            showSuccessMsg: true
-        });
+            }
+        ));
     }
 
     back(event: Event) {

@@ -4,6 +4,8 @@ import { ComponentMode } from 'src/app/common/common';
 import { DictService } from './dict.service';
 import { Router } from '@angular/router';
 import { CURRENT_DEFAULT } from 'src/app/common/multi-mode.component';
+import { CommonObserver } from 'src/app/common/base-http.service';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
     selector: 'app-dict',
@@ -24,17 +26,18 @@ export class DictComponent implements OnInit {
 
     orderModalList: Array<any> = [];
 
-    constructor(private dictService: DictService, private router: Router) { }
+    constructor(private dictService: DictService, private router: Router, private messageService: NzMessageService) { }
 
     ngOnInit() {
-        this.dictService.queryTypes(null, {
-            success: resp => {
+        this.dictService.queryTypes(null).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.dictTypes = resp.data;
                 if(this.dictTypes.length > 0) {
                     this.onTypeClick(this.dictTypes[0]);
                 }
             }
-        });
+        ));
     }
 
     onTypeClick(type: string) {
@@ -44,11 +47,12 @@ export class DictComponent implements OnInit {
             return;
         }
         this.selectedType = type;
-        this.dictService.queryByType(type, {
-            success: resp => {
+        this.dictService.queryByType(type).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.dicts = resp.data;
             }
-        });
+        ));
     }
 
     onEditClick(dict: any) {
@@ -63,9 +67,9 @@ export class DictComponent implements OnInit {
             console.error("数据没有ID，不能删除");
             return;
         }
-        this.dictService.del(dict.id, {
-            showSuccessMsg: true
-        });
+        this.dictService.del(dict.id).subscribe(new CommonObserver(
+            this.router, this.messageService, null, true
+        ));
     }
 
     onAddClick(event: any): void {
@@ -76,16 +80,9 @@ export class DictComponent implements OnInit {
     onDragDropped(cdd: CdkDragDrop<string[]>) {
         console.log(event);
         let target: any = this.dicts[cdd.previousIndex];
-        this.dictService.reorder(target.id, this.dicts[cdd.currentIndex].order, {
-            success: resp => {
-                this.dictService.queryByType(this.selectedType, {
-                    success: resp => {
-                        this.dicts = resp.data;
-                    }
-                });
-            },
-            showSuccessMsg: true
-        });
+        this.dictService.reorder(target.id, this.dicts[cdd.currentIndex].order).subscribe(new CommonObserver(
+            this.router, this.messageService, null, true
+        ));
     }
 
 }

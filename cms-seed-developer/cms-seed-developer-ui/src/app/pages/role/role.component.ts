@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { RoleService } from './role.service';
+import { CommonObserver } from 'src/app/common/base-http.service';
+import { Router } from '@angular/router';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
     selector: 'app-role',
@@ -23,7 +26,8 @@ export class RoleComponent implements OnInit {
 
     editCache: { [key: string]: any } = {};
 
-    constructor(private fb: FormBuilder, private roleService: RoleService) { }
+    constructor(private fb: FormBuilder, private roleService: RoleService, private router: Router,
+                private messageService: NzMessageService) { }
 
     ngOnInit() {
         this.addForm = this.fb.group({
@@ -35,13 +39,11 @@ export class RoleComponent implements OnInit {
     }
 
     submitForm(event: any, value: any) {
-        this.roleService.save(value, {
-            success: resp => {
+        this.roleService.save(value).subscribe(new CommonObserver(this.router, this.messageService, 
+            resp => {
                 this.onPageChange(null);
                 this.addForm.reset();
-            },
-            showSuccessMsg: true
-        });
+            }, true));
     }
 
     onSearchClick(event: any) {
@@ -49,12 +51,13 @@ export class RoleComponent implements OnInit {
     }
 
     onPageChange(event: any, reset?: boolean) {
-        this.roleService.page(this.searchKey, this.pageNo, this.pageSize, {
-            success: resp => {
+        this.roleService.page(this.searchKey, this.pageNo, this.pageSize).subscribe(new CommonObserver(
+            this.router, this.messageService, 
+            resp => {
                 this.page = resp.data;
                 this.updateEditCache();
             }
-        });
+        ));
     }
 
     startEditRow(role: any) {
@@ -62,16 +65,16 @@ export class RoleComponent implements OnInit {
     }
 
     saveRow(role: any) {
-        this.roleService.save(this.editCache[role.id].data, {
-            success: resp => {
+        this.roleService.save(this.editCache[role.id].data).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 let data = this.editCache[role.id].data;
                 role.code = data.code;
                 role.name = data.name;
                 role.description = data.description;
                 this.editCache[role.id].edit = false;
-            },
-            showSuccessMsg: true
-        });
+            }
+        ));
     }
 
     cancelEdit(role: any) {
@@ -80,11 +83,12 @@ export class RoleComponent implements OnInit {
     }
 
     del(role: any) {
-        this.roleService.del(role.id, {
-            success: resp => {
+        this.roleService.del(role.id).subscribe(new CommonObserver(
+            this.router, this.messageService,
+            resp => {
                 this.onPageChange(null);
             }
-        });
+        ));
     }
 
     private updateEditCache() {
