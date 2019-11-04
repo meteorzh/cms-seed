@@ -69,7 +69,7 @@ ${extKeyFields.get(0).name} = #{pk}
     <sql id="baseWhereClause">
         <trim prefix="WHERE" prefixOverrides="AND">
             #foreach($field in ${extMainFields})
-            <if test="${field.propertyName} != null#if(${field.getColumnType().getType()} == "String") AND ${field.propertyName} != ''#end">
+            <if test="${field.propertyName} != null#if(${field.getColumnType().getType()} == "String") and ${field.propertyName} != ''#end">
                 AND ${field.name} = #{${field.propertyName}}
             </if>
             #end
