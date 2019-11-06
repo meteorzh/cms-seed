@@ -171,7 +171,9 @@ public class GeneratorController {
 //        strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
         // 写于父类中的公共字段
 //		strategy.setSuperEntityColumns("id");
-        strategy.setInclude(generation.getTableName());
+        if (!StringUtils.isEmpty(generation.getTableName())) {
+            strategy.setInclude(generation.getTableName().split(","));
+        }
         strategy.setControllerMappingHyphenStyle(true);
         if (!StringUtils.isEmpty(generation.getTableNamePrefix())) {
             strategy.setTablePrefix(generation.getTableNamePrefix());
