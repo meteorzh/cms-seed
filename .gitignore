@@ -19,3 +19,4 @@ logs
 node_modules
 .editorconfig
 *.iml
+package-lock.json
