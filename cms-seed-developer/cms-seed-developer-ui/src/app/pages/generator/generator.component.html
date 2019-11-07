@@ -1,102 +1,104 @@
-<h2>代码生成</h2>
-<nz-tabset>
-    <nz-tab nzTitle="Maven模块生成"></nz-tab>
-    <nz-tab nzTitle="代码生成">
-        <div nz-row>
-            <div nz-col nzSpan="12">
-                <form nz-form [formGroup]="genForm" (ngSubmit)="submitForm(event, genForm.value)">
-                    <nz-form-item>
-                        <nz-form-label nzSpan="6" nzRequired>ProjectPath</nz-form-label>
-                        <nz-form-control nzSpan="12">
-                            <input nz-input formControlName="projectPath" placeholder="输入项目路径(结尾不带/)" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-label nzSpan="6">Author</nz-form-label>
-                        <nz-form-control nzSpan="12">
-                            <input nz-input formControlName="author" placeholder="代码作者" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-label nzSpan="6">EntitySuffix</nz-form-label>
-                        <nz-form-control nzSpan="12">
-                            <input nz-input formControlName="entitySuffix" placeholder="Entity文件后缀" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-label nzSpan="6">OutputPackage</nz-form-label>
-                        <nz-form-control nzSpan="12">
-                            <input nz-input formControlName="outputPackage" placeholder="输出文件的包名" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-label nzSpan="6">ModuleName</nz-form-label>
-                        <nz-form-control nzSpan="12">
-                            <input nz-input formControlName="moduleName" placeholder="输出文件的模块名" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-label nzSpan="6" nzRequired>TableName</nz-form-label>
-                        <nz-form-control nzSpan="12">
-                            <input nz-input formControlName="tableName" placeholder="表名，多个表使用逗号分开" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-label nzSpan="6">TableNamePrefix</nz-form-label>
-                        <nz-form-control nzSpan="12">
-                            <input nz-input formControlName="tableNamePrefix" placeholder="数据库表明前缀" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-label nzSpan="6" nzRequired>Template</nz-form-label>
-                        <nz-form-control nzSpan="12">
-                            <input nz-input formControlName="template" placeholder="选择模板" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-control nzSpan="18">
-                            <nz-collapse>
-                                <nz-collapse-panel nzHeader="数据源配置" nzActive="false">
-                                    <nz-form-item>
-                                        <nz-form-label nzSpan="6" nzRequired>URL</nz-form-label>
-                                        <nz-form-control nzSpan="12">
-                                            <input nz-input formControlName="url" placeholder="数据库连接" />
-                                        </nz-form-control>
-                                    </nz-form-item>
-                                    <nz-form-item>
-                                        <nz-form-label nzSpan="6" nzRequired>Driver</nz-form-label>
-                                        <nz-form-control nzSpan="12">
-                                            <input nz-input formControlName="driver" placeholder="数据库驱动" />
-                                        </nz-form-control>
-                                    </nz-form-item>
-                                    <nz-form-item>
-                                        <nz-form-label nzSpan="6" nzRequired>Username</nz-form-label>
-                                        <nz-form-control nzSpan="12">
-                                            <input nz-input formControlName="username" placeholder="数据库用户名" />
-                                        </nz-form-control>
-                                    </nz-form-item>
-                                    <nz-form-item>
-                                        <nz-form-label nzSpan="6" nzRequired>Password</nz-form-label>
-                                        <nz-form-control nzSpan="12">
-                                            <input nz-input formControlName="password" placeholder="数据库密码" />
-                                        </nz-form-control>
-                                    </nz-form-item>
-                                </nz-collapse-panel>
-                            </nz-collapse>
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-control nzOffset="6" nzSpan="4">
-                            <button nz-button nzType="primary" [disabled]="!genForm.valid">生成代码</button>
-                        </nz-form-control>
-                    </nz-form-item>
-                </form>
+<div class="generator-container">
+    <h2>代码生成</h2>
+    <nz-tabset>
+        <nz-tab nzTitle="Maven模块生成"></nz-tab>
+        <nz-tab nzTitle="代码生成">
+            <div nz-row>
+                <div nz-col nzSpan="12">
+                    <form nz-form [formGroup]="genForm" (ngSubmit)="submitForm(event, genForm.value)">
+                        <nz-form-item>
+                            <nz-form-label nzSpan="6" nzRequired>ProjectPath</nz-form-label>
+                            <nz-form-control nzSpan="12">
+                                <input nz-input formControlName="projectPath" placeholder="输入项目路径(结尾不带/)" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzSpan="6">Author</nz-form-label>
+                            <nz-form-control nzSpan="12">
+                                <input nz-input formControlName="author" placeholder="代码作者" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzSpan="6">EntitySuffix</nz-form-label>
+                            <nz-form-control nzSpan="12">
+                                <input nz-input formControlName="entitySuffix" placeholder="Entity文件后缀" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzSpan="6">OutputPackage</nz-form-label>
+                            <nz-form-control nzSpan="12">
+                                <input nz-input formControlName="outputPackage" placeholder="输出文件的包名" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzSpan="6">ModuleName</nz-form-label>
+                            <nz-form-control nzSpan="12">
+                                <input nz-input formControlName="moduleName" placeholder="输出文件的模块名" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzSpan="6" nzRequired>TableName</nz-form-label>
+                            <nz-form-control nzSpan="12">
+                                <input nz-input formControlName="tableName" placeholder="表名，多个表使用逗号分开" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzSpan="6">TableNamePrefix</nz-form-label>
+                            <nz-form-control nzSpan="12">
+                                <input nz-input formControlName="tableNamePrefix" placeholder="数据库表明前缀" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzSpan="6" nzRequired>Template</nz-form-label>
+                            <nz-form-control nzSpan="12">
+                                <input nz-input formControlName="template" placeholder="选择模板" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-control nzSpan="18">
+                                <nz-collapse>
+                                    <nz-collapse-panel nzHeader="数据源配置" nzActive="false">
+                                        <nz-form-item>
+                                            <nz-form-label nzSpan="6" nzRequired>URL</nz-form-label>
+                                            <nz-form-control nzSpan="12">
+                                                <input nz-input formControlName="url" placeholder="数据库连接" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                        <nz-form-item>
+                                            <nz-form-label nzSpan="6" nzRequired>Driver</nz-form-label>
+                                            <nz-form-control nzSpan="12">
+                                                <input nz-input formControlName="driver" placeholder="数据库驱动" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                        <nz-form-item>
+                                            <nz-form-label nzSpan="6" nzRequired>Username</nz-form-label>
+                                            <nz-form-control nzSpan="12">
+                                                <input nz-input formControlName="username" placeholder="数据库用户名" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                        <nz-form-item>
+                                            <nz-form-label nzSpan="6" nzRequired>Password</nz-form-label>
+                                            <nz-form-control nzSpan="12">
+                                                <input nz-input formControlName="password" placeholder="数据库密码" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </nz-collapse-panel>
+                                </nz-collapse>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-control nzOffset="6" nzSpan="4">
+                                <button nz-button nzType="primary" [disabled]="!genForm.valid">生成代码</button>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </form>
+                </div>
+                <div nz-col nzSpan="12">
+                    <h3>生成信息预览</h3>
+                    <div><strong>Controller，Entity等代码生成地址：</strong></div>
+                    <div><span>{{genForm.value.projectPath}}/src/main/java/{{genForm.value.outputPackage | strReplace: '\\.': '/'}}/{{genForm.value.moduleName}}</span></div>
+                </div>
             </div>
-            <div nz-col nzSpan="12">
-                <h3>生成信息预览</h3>
-                <div><strong>Controller，Entity等代码生成地址：</strong></div>
-                <div><span>{{genForm.value.projectPath}}/src/main/java/{{genForm.value.outputPackage | strReplace: '\\.': '/'}}/{{genForm.value.moduleName}}</span></div>
-            </div>
-        </div>
-    </nz-tab>
-</nz-tabset>
+        </nz-tab>
+    </nz-tabset>
+</div>
