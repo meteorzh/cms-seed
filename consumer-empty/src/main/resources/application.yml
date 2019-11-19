@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: consumer-empty
+
+rocketmq:
+#  nameServer: 192.168.1.254:9876
+  name-server: 192.168.1.112:9876;192.168.1.113:9876
+
+#项目配置
+app:
+  mq:
+    topic-wms: dms-extct-wms-topic-dev
+    consumer-group-wms: dms-extct-wms-consumgrp-dev
+    topic-ecs: dms-extct-ecs-topic-dev
+    consumer-group-ecs: dms-extct-ecs-consumgrp-dev
+    topic-erp: dms-extct-erp-topic-dev
+    consumer-group-erp: dms-extct-erp-consumgrp-dev
+#    topic-wms: dms-extct-wms-topic-test
+#    consumer-group-wms: dms-extct-wms-consumgrp-test
+#    topic-ecs: dms-extct-ecs-topic-test
+#    consumer-group-ecs: dms-extct-ecs-consumgrp-test
+#    topic-erp: dms-extct-erp-topic-test
+#    consumer-group-erp: dms-extct-erp-consumgrp-test

@@ -15,12 +15,14 @@
     	<module>cms-seed-generator</module>
     	<module>cms-seed-common</module>
 		<module>cms-seed-developer</module>
-	</modules>
+        <module>consumer-empty</module>
+    </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<druid.ver>1.1.17</druid.ver>
 		<pagehelper.starter.ver>1.2.12</pagehelper.starter.ver>
+		<rocketmq.starter.ver>2.0.3</rocketmq.starter.ver>
 		<spring.boot.ver>2.1.7.RELEASE</spring.boot.ver>
 		<swagger.ver>2.9.2</swagger.ver>
 		<mybatis.plus.starter.ver>3.2.0</mybatis.plus.starter.ver>
@@ -36,6 +38,13 @@
 				<version>${spring.boot.ver}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<!-- RocketMQ -->
+			<dependency>
+				<groupId>org.apache.rocketmq</groupId>
+				<artifactId>rocketmq-spring-boot-starter</artifactId>
+				<version>${rocketmq.starter.ver}</version>
 			</dependency>
 			
 			<!-- Mybatis Plus -->

@@ -4,13 +4,14 @@
 		 FileAppender会把日志文件生成到temp目录(搜索java.io.tmpdir)的spring.log文件中，不是自己想要的配置 -->
 	<!-- <include resource="org/springframework/boot/logging/logback/base.xml" /> -->
 	
-	<property name="PROJECT" value="tool-platform" />
+	<property name="PROJECT" value="cms-seed-web" />
 	<property name="LOG_HOME" value="logs/${PROJECT}" />
+	<property name="log.pattern" value="%date{yyyy-MM-dd HH:mm:ss.SSS} %5level [${PID} %-20.20thread] %-40.40logger{39}: %msg%n" />
 	
 	<!-- 控制台 -->
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %5level [${PID} %-20.20thread] %-40.40logger{39}: %msg%n</pattern>
+			<pattern>${log.pattern}</pattern>
 			<charset>utf8</charset>
 		</encoder>
 	</appender>
@@ -18,11 +19,11 @@
 	<!-- 普通日志文件 -->
 	<appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<encoder>
-			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %5level [${PID} %-20.20thread] %-40.40logger{39}: %msg%n</pattern>
+			<pattern>${log.pattern}</pattern>
 		</encoder>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${LOG_HOME}/${PROJECT}_%d{yyyy-MM-dd}_%i.info.log</fileNamePattern>
-			<maxHistory>30</maxHistory>
+			<fileNamePattern>${LOG_HOME}/info_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+			<maxHistory>10</maxHistory>
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>100MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
@@ -37,11 +38,11 @@
 			<onMismatch>DENY</onMismatch>
 		</filter>
 		<encoder>
-			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %5level [${PID} %-20.20thread] %-40.40logger{39}: %msg%n</pattern>
+			<pattern>${log.pattern}</pattern>
 		</encoder>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${LOG_HOME}/${PROJECT}_%d{yyyy-MM-dd}_%i.debug.log</fileNamePattern>
-			<maxHistory>30</maxHistory>
+			<fileNamePattern>${LOG_HOME}/debug_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+			<maxHistory>10</maxHistory>
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>100MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
@@ -56,11 +57,11 @@
 			<onMismatch>DENY</onMismatch>
 		</filter>
 		<encoder>
-			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %5level [${PID} %-20.20thread] %-40.40logger{39}: %msg%n</pattern>
+			<pattern>${log.pattern}</pattern>
 		</encoder>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${LOG_HOME}/${PROJECT}_%d{yyyy-MM-dd}_%i.error.log</fileNamePattern>
-			<maxHistory>30</maxHistory>
+			<fileNamePattern>${LOG_HOME}/error_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+			<maxHistory>10</maxHistory>
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>100MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
@@ -82,6 +83,6 @@
 	</springProfile>
 	
 	<springProfile name="prod">
-		<logger name="cn.rooomy" level="WARN" />
+
 	</springProfile>
 </configuration>
