@@ -1,0 +1,19 @@
+.node-row {
+    display: flex;
+}
+
+.tree-container {
+    overflow: scroll;
+}
+
+.node-head-col {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    width: 100px;
+}
+
+.node-value-col {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    width: 90px;
+}

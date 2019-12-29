@@ -8,7 +8,8 @@ const routes: Routes = [
   { path: 'group', loadChildren: () => import('./pages/group/group.module').then(m => m.GroupModule) },
   { path: 'role', loadChildren: () => import('./pages/role/role.module').then(m => m.RoleModule) },
   { path: 'permission', loadChildren: () => import('./pages/permission/permission.module').then(m => m.PermissionModule) },
-  { path: 'generator', loadChildren: () => import('./pages/generator/generator.module').then(m => m.GeneratorModule) }
+  { path: 'generator', loadChildren: () => import('./pages/generator/generator.module').then(m => m.GeneratorModule) },
+  { path: 'test', loadChildren: () => import('./pages/test/test.module').then(m => m.TestModule) }
 ];
 
 @NgModule({
