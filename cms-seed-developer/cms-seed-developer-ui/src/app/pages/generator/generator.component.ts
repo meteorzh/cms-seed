@@ -8,7 +8,7 @@ import { CommonObserver } from 'src/app/common/base-http.service';
 @Component({
     selector: 'app-generator',
     templateUrl: './generator.component.html',
-    styleUrls: ['./generator.component.css']
+    styleUrls: ['./generator.component.scss']
 })
 export class GeneratorComponent implements OnInit {
 
