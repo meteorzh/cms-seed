@@ -5,7 +5,7 @@
         <nz-tab nzTitle="代码生成">
             <div nz-row>
                 <div nz-col nzSpan="12">
-                    <form nz-form [formGroup]="genForm" (ngSubmit)="submitForm(event, genForm.value)">
+                    <form nz-form [formGroup]="genForm" (ngSubmit)="submitForm($event, genForm.value)">
                         <nz-form-item>
                             <nz-form-label nzSpan="6" nzRequired>ProjectPath</nz-form-label>
                             <nz-form-control nzSpan="12">

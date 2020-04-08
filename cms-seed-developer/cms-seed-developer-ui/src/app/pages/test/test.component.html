@@ -1,3 +1,5 @@
+<button nz-button nzType="primary" (click)="test($event)">测试Test接口</button>
+<div>{{testResult}}</div>
 <div class="tree-container">
     <ng-container *ngFor="let item of data.children">
         <ng-container *ngTemplateOutlet="row; context: {'data':item}"></ng-container>

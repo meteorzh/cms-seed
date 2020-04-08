@@ -1,6 +1,6 @@
 <h2>角色管理</h2>
 <nz-alert nzType="warning" nzMessage="说明" nzDescription='这里只能维护系统保留的角色，即被硬编码的角色，如"系统管理员"角色'></nz-alert>
-<form nz-form [formGroup]="addForm" (ngSubmit)="submitForm(event, addForm.value)">
+<form nz-form [formGroup]="addForm" (ngSubmit)="submitForm($event, addForm.value)">
     <div nz-row nzType="flex" nzAlign="middle">
         <div nz-col nzSpan="2"><strong>New Role</strong></div>
         <div nz-col nzSpan="6">

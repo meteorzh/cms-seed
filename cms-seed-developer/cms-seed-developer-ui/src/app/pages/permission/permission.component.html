@@ -1,5 +1,5 @@
 <h2>权限管理</h2>
-<form nz-form [formGroup]="searchForm" (ngSubmit)="submitForm(event, searchForm.value)">
+<form nz-form [formGroup]="searchForm" (ngSubmit)="submitForm($event, searchForm.value)">
     <div nz-row nzType="flex" nzAlign="middle">
         <div nz-col nzSpan="6">
             <nz-form-item nzFlex style="margin: 5px 0">

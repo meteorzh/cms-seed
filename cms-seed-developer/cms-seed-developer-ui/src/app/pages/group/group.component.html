@@ -1,6 +1,6 @@
 <h2>用户组管理</h2>
 <nz-alert nzType="warning" nzMessage="说明" nzDescription='这里只能维护系统保留的用户组，即发布系统时需要通过脚本创建的那些用户组，如"所有用户"用户组'></nz-alert>
-<form nz-form [formGroup]="addForm" (ngSubmit)="submitForm(event, addForm.value)">
+<form nz-form [formGroup]="addForm" (ngSubmit)="submitForm($event, addForm.value)">
     <div nz-row nzType="flex" nzAlign="middle">
         <div nz-col nzSpan="2"><strong>New Group</strong></div>
         <div nz-col nzSpan="6">

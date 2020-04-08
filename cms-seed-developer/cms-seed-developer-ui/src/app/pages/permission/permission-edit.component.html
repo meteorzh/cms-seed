@@ -1,4 +1,4 @@
-<form nz-form [formGroup]="pmsForm" (ngSubmit)="submitForm(event, pmsForm.value)" nzLayout="horizontal">
+<form nz-form [formGroup]="pmsForm" (ngSubmit)="submitForm($event, pmsForm.value)" nzLayout="horizontal">
     <nz-form-item>
         <nz-form-label nzRequired nzSpan="3">Code</nz-form-label>
         <nz-form-control nzSpan="8">
