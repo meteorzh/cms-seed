@@ -20,7 +20,7 @@ public interface RegionMapper extends BaseMapper<RegionPO> {
      * @param region 地区数据
      * @return int
      */
-    int insert(RegionPO region);
+//    int insert(RegionPO region);
 
     /**
      * 更新地区数据

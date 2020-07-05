@@ -24,7 +24,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, RegionPO> imple
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void create(RegionPO region) throws BusinessException {
-        this.baseMapper.insert(region);
+        saveOrUpdate(region);
     }
 
     @Transactional(rollbackFor = Exception.class)

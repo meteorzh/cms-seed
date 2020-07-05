@@ -1,5 +1,8 @@
 package com.github.wenzhencn.cmsseed.dev.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -8,9 +11,11 @@ import lombok.Data;
  * @since Created in 2020/7/3 13:27
  */
 @Data
+@TableName("sys_region")
 public class RegionPO {
 
     /** 主键 */
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /** 区域编码 */

@@ -22,10 +22,10 @@
         id, `code`, `name`, pcode, sname, `level`, citycode, yzcode, mername, lng, lat, pinyin
     </sql>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into sys_region(`code`, `name`, pcode, sname, `level`, citycode, yzcode, mername, lng, lat, pinyin)
-        values (#{code}, #{name}, #{pcode}, #{sname}, #{level}, #{citycode}, #{yzcode}, #{mername}, #{lng}, #{lat}, #{pinyin})
-    </insert>
+<!--    <insert id="insert" useGeneratedKeys="true" keyProperty="id">-->
+<!--        insert into sys_region(`code`, `name`, pcode, sname, `level`, citycode, yzcode, mername, lng, lat, pinyin)-->
+<!--        values (#{code}, #{name}, #{pcode}, #{sname}, #{level}, #{citycode}, #{yzcode}, #{mername}, #{lng}, #{lat}, #{pinyin})-->
+<!--    </insert>-->
 
     <update id="update">
         update sys_region

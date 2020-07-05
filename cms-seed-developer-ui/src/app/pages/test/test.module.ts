@@ -4,10 +4,13 @@ import { CommonModule } from '@angular/common';
 import { TestComponent } from './test.component';
 import { TestRoutingModule } from './test-routing.module';
 import { TestService } from './test.service';
-import { NzButtonModule } from 'ng-zorro-antd';
+import { SharedModule } from 'src/app/common/shared.module';
 
 @NgModule({
-    imports: [ CommonModule, TestRoutingModule, NzButtonModule ],
+    imports: [
+        SharedModule, 
+        TestRoutingModule
+    ],
     declarations: [ TestComponent ],
     exports: [ TestComponent ],
     providers: [ TestService ]

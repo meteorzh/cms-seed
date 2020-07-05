@@ -1,28 +1,30 @@
 <h2>地区管理</h2>
 <div nz-row nzType="flex" nzAlign="middle">
     <div nz-col nzSpan="12" style="margin-top: 10px; font-size: 1.2em"><strong>地区列表</strong></div>
-    <div nz-col nzOffset="11" nzSpan="1"><button nz-button nzType="primary" (click)="onAddClick($event)">Add</button>
+    <div nz-col nzOffset="10" nzSpan="2"><button nz-button nzType="primary" (click)="onAddClick($event)">Add</button>
     </div>
 </div>
-<nz-table [nzData]="regions" nzTableLayout="fixed" nzFrontPagination="false" [nzScroll]="{ y: '600px' }">
+<nz-table [nzData]="regions" nzSize="small" [nzLoading]="loading" nzTableLayout="fixed" nzFrontPagination="false" [nzScroll]="{ y: '500px' }">
     <thead>
         <tr>
-            <th nzWidth="200px" nzEllipsis="true">编码</th>
+            <th nzWidth="50px"></th>
+            <th nzWidth="170px">编码</th>
             <th>地区</th>
             <th>简称</th>
-            <th>等级</th>
-            <th>区号</th>
-            <th>邮编</th>
+            <th nzWidth="60px">等级</th>
+            <th nzWidth="60px">区号</th>
+            <th nzWidth="80px">邮编</th>
             <th>组合名</th>
-            <th>经度</th>
-            <th>纬度</th>
+            <th nzWidth="80px">经度</th>
+            <th nzWidth="80px">纬度</th>
             <th>全拼</th>
             <th>操作</th>
         </tr>
     </thead>
     <tbody>
         <ng-container *ngFor="let item of regions; let i = index">
-            <tr *ngIf="(item.parent && item.parent.expand) || !item.parent">
+            <tr *ngIf="(item.parent && item.parent.expand) || !item.parent" [ngClass]="{'selected-row': item === selectedRegion}">
+                <td [nzChecked]="item === selectedRegion" (nzCheckedChange)="onSelectChange(item, $event)"></td>
                 <td [nzIndentSize]="item.dlv! * 20" [nzShowExpand]="!item.children || item.children.length > 0"
                     [(nzExpand)]="item.expand" (nzExpandChange)="collapse(i, item, $event)">
                     {{ item.code }}
@@ -52,91 +54,62 @@
     </tbody>
 </nz-table>
 <nz-modal [(nzVisible)]="editVisible" [nzTitle]="modalTitle" (nzOnCancel)="onModalCancelClick()" (nzOnOk)="onModalSaveClick()">
-    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+    <form nz-form [formGroup]="regionForm">
+        <input hidden formControlName="id" id="id" />
+        <input hidden formControlName="pcode" id="pcode" />
+        <input hidden formControlName="level" id="level" />
         <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">E-mail</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid E-mail!">
-                <input nz-input formControlName="email" id="email" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password" nzRequired>Password</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input your password!">
-                <input nz-input type="password" id="password" formControlName="password"
-                    (ngModelChange)="updateConfirmValidator()" />
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区编码</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区编码">
+                <input nz-input formControlName="code" id="code" />
             </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword" nzRequired>Confirm Password</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
-                <input nz-input type="password" formControlName="checkPassword" id="checkPassword" />
-                <ng-template #errorTpl let-control>
-                    <ng-container *ngIf="control.hasError('required')">
-                        Please confirm your password!
-                    </ng-container>
-                    <ng-container *ngIf="control.hasError('confirm')">
-                        Two passwords that you enter is inconsistent!
-                    </ng-container>
-                </ng-template>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区名称</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区名称">
+                <input nz-input id="name" formControlName="name" (ngModelChange)="nameControlChange($event)" />
             </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nickname" nzRequired>
-                <span>
-                    Nickname
-                    <i nz-icon nz-tooltip nzTooltipTitle="What do you want other to call you" nzType="question-circle"
-                        nzTheme="outline"></i>
-                </span>
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input your nickname!">
-                <input nz-input id="nickname" formControlName="nickname" />
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区简称</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区简称">
+                <input nz-input id="sname" formControlName="sname" />
             </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phoneNumber" nzRequired>Phone Number</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" [nzValidateStatus]="validateForm.controls['phoneNumber']"
-                nzErrorTip="Please input your phone number!">
-                <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
-                    <ng-template #addOnBeforeTemplate>
-                        <nz-select formControlName="phoneNumberPrefix" class="phone-select">
-                            <nz-option nzLabel="+86" nzValue="+86"></nz-option>
-                            <nz-option nzLabel="+87" nzValue="+87"></nz-option>
-                        </nz-select>
-                    </ng-template>
-                    <input formControlName="phoneNumber" id="'phoneNumber'" nz-input />
-                </nz-input-group>
+            <nz-form-label [nzSm]="6" [nzXs]="24">组合名</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input id="mername" formControlName="mername" />
             </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="website" nzRequired>Website</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input website!">
-                <input nz-input id="website" formControlName="website" placeholder="website" />
+            <nz-form-label [nzSm]="6" [nzXs]="24">区号</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input id="citycode" formControlName="citycode" />
             </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="captcha" nzRequired>Captcha</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input the captcha you got!"
-                nzExtra="We must make sure that your are a human.">
-                <div nz-row [nzGutter]="8">
-                    <div nz-col [nzSpan]="12">
-                        <input nz-input formControlName="captcha" id="captcha" />
-                    </div>
-                    <div nz-col [nzSpan]="12">
-                        <button nz-button (click)="getCaptcha($event)">Get captcha</button>
-                    </div>
-                </div>
+            <nz-form-label [nzSm]="6" [nzXs]="24">邮编</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input id="yzcode" formControlName="yzcode" />
             </nz-form-control>
         </nz-form-item>
-        <nz-form-item nz-row class="register-area">
-            <nz-form-control [nzSpan]="14" [nzOffset]="6">
-                <label nz-checkbox formControlName="agree">
-                    <span>I have read the <a>agreement</a></span>
-                </label>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24">经度</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input id="lng" formControlName="lng" />
             </nz-form-control>
         </nz-form-item>
-        <nz-form-item nz-row class="register-area">
-            <nz-form-control [nzSpan]="14" [nzOffset]="6">
-                <button nz-button nzType="primary">Register</button>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24">纬度</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input id="lat" formControlName="lat" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24">拼音</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input id="pinyin" formControlName="pinyin" />
             </nz-form-control>
         </nz-form-item>
     </form>

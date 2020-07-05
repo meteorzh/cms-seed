@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { RegionService } from './region.service';
 import { CommonObserver } from 'src/app/common/base-http.service';
 import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd';
-import { ComponentMode } from 'src/app/common/common';
 
 @Component({
     selector: 'app-region',
@@ -15,9 +14,15 @@ export class RegionComponent implements OnInit {
 
     regions: any[] = [];
 
+    loading: boolean = false;
+
+    selectedRegion: any;
+
     regionForm: FormGroup;
 
     editVisible: boolean = false;
+
+    editRegion: any;
 
     modalTitle: string;
 
@@ -25,12 +30,10 @@ export class RegionComponent implements OnInit {
                 private messageService: NzMessageService) { }
 
     ngOnInit() {
-        this.queryChildren(0, resp => {
-            for (const n of resp.data) n.dlv = 0;
-            this.regions = resp.data;
-        });
+        this.refresh();
 
         this.regionForm = this.fb.group({
+            id: [null],
             code: [null, [Validators.required]],
             name: [null, [Validators.required]],
             sname: [null, [Validators.required]],
@@ -38,8 +41,24 @@ export class RegionComponent implements OnInit {
             yzcode: [null, []],
             lng: [null, []],
             lat: [null, []],
-            pinyin: [null, []]
+            pinyin: [null, []],
+            pcode: [],
+            level: []
         });
+        let mernameControl: FormControl = new FormControl();
+        mernameControl.disable();
+        this.regionForm.addControl("mername", mernameControl);
+    }
+
+    refresh() {
+        this.queryChildren(0, resp => {
+            for (const n of resp.data) n.dlv = 0;
+            this.regions = resp.data;
+        });
+    }
+
+    onSelectChange(node: any, $event: boolean): void {
+        this.selectedRegion = $event ? node : null;
     }
 
     collapse(index: number, node: any, $event: boolean) {
@@ -49,7 +68,10 @@ export class RegionComponent implements OnInit {
                 this.regions.splice(index + 1, 0, ...node.children);
             } else {
                 this.queryChildren(node.code, resp => {
-                    for (const n of resp.data) n.dlv = node.dlv + 1;
+                    for (const n of resp.data) {
+                        n.parent = node;
+                        n.dlv = node.dlv + 1;
+                    }
                     node.children = resp.data;
                     this.regions.splice(index + 1, 0, ...resp.data);
                 });
@@ -69,24 +91,59 @@ export class RegionComponent implements OnInit {
         }
     }
 
-    onAddClick($event: any): void {
+    nameControlChange($event: any): void {
+        let baseMer;
+        if (this.editRegion == null) {
+            // 新增
+            baseMer = this.selectedRegion ? `${this.selectedRegion.mername},` : "";
+        } else {
+            // 更新
+            baseMer = this.editRegion.parent ? `${this.editRegion.parent.mername},` : "";
+        }
+        this.regionForm.patchValue({ mername: `${baseMer}${$event}` });
+    }
 
+    onAddClick($event: any): void {
+        this.modalTitle = "新增地区";
+        this.editRegion = null;
+        this.regionForm.reset();
+        if (this.selectedRegion) {
+            this.regionForm.patchValue({
+                mername: `${this.selectedRegion.mername},`, 
+                level: this.selectedRegion.level + 1,
+                pcode: this.selectedRegion.code
+            });
+        } else {
+            this.regionForm.patchValue({ level: 0, pcode: 0 });
+        }
+        this.editVisible = true;
     }
 
     onEditClick(node: any): void {
-
+        this.modalTitle = "编辑地区";
+        this.editRegion = node;
+        let {dlv, expand, children, parent, ...formObj} = node;
+        this.regionForm.setValue(formObj);
+        this.editVisible = true;
     }
 
     onModalCancelClick(): void {
-
+        this.editVisible = false;
     }
 
     onModalSaveClick(): void {
-        
+        let forSave = this.regionForm.getRawValue();
+        this.regionService.save(forSave).subscribe(new CommonObserver(this.router, this.messageService, resp => {
+            this.editVisible = false;
+            this.regionForm.reset();
+            this.refresh();
+        }, true));
     }
 
     remove(node: any): void {
-        this.regionService.del(node.id).subscribe(new CommonObserver(this.router, this.messageService, null, true));
+        this.regionService.del(node.id).subscribe(new CommonObserver(this.router, this.messageService, resp => {
+            this.refresh();
+        }, true));
     }
 
     /**
@@ -102,6 +159,10 @@ export class RegionComponent implements OnInit {
     }
 
     private queryChildren(pcode: number, callback: (any) => void) {
-        this.regionService.children(pcode).subscribe(new CommonObserver(this.router, this.messageService, callback));
+        this.loading = true;
+        this.regionService.children(pcode).subscribe(new CommonObserver(this.router, this.messageService, resp => {
+            callback(resp);
+            this.loading = false;
+        }));
     }
 }

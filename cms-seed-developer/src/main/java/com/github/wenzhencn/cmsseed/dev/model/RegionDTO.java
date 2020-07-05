@@ -38,7 +38,6 @@ public class RegionDTO {
     private Integer level;
 
     /** 区域编码 */
-    @NotEmpty
     private String citycode;
 
     /** 邮政编码 */

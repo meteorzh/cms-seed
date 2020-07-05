@@ -29,6 +29,7 @@ public class GlobalExceptionController {
 	 */
 	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
 	public CommonResponse<Object> argumentExceptionHandler(HttpServletRequest request, Exception e) {
+		log.warn(e.getMessage());
 		return CommonResponse.newResponse(CommonErrorCode.PARAMETER_INVALID, "参数验证失败");
 	}
 	
