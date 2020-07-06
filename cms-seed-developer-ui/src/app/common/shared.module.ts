@@ -11,7 +11,6 @@ import { NzButtonModule, NzInputModule, NzMessageModule, NzFormModule, NzGridMod
         FormsModule,
         NzButtonModule,
         NzInputModule,
-        NzMessageModule,
         NzFormModule,
         NzGridModule,
     ]

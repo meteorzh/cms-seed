@@ -5,9 +5,11 @@ import com.github.wenzhencn.cmsseed.common.BusinessException;
 import com.github.wenzhencn.cmsseed.dev.entity.RegionPO;
 import com.github.wenzhencn.cmsseed.dev.mapper.RegionMapper;
 import com.github.wenzhencn.cmsseed.dev.service.IRegionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +39,12 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, RegionPO> imple
     @Override
     public void delete(Long id) throws BusinessException {
         removeById(id);
+    }
+
+    @Override
+    public List<RegionPO> queryList(String name) {
+        if (StringUtils.isEmpty(name)) return Collections.emptyList();
+        return this.baseMapper.selectByName(name);
     }
 
     @Override

@@ -45,6 +45,13 @@
         where id = #{id}
     </update>
 
+    <select id="selectByName" resultMap="baseResultMap">
+        select
+        <include refid="allColumns" />
+        from sys_region
+        where `name` like '%${name}%' or `sname` like '%${name}%'
+    </select>
+
     <select id="selectByPcode" resultMap="baseResultMap">
         select
         <include refid="allColumns" />

@@ -26,6 +26,10 @@ export class RegionService extends BaseHttpService {
         return super.delete({ url: `/api/sys/region/del/${id}` });
     }
 
+    search(name: string): Observable<HttpEvent<CommonResponse>> {
+        return super.get({ url: `/api/sys/region/querylist?name=${name}` });
+    }
+
     children(pcode: number): Observable<HttpEvent<CommonResponse>> {
         return super.get({ url: `/api/sys/region/children/${pcode}` });
     }

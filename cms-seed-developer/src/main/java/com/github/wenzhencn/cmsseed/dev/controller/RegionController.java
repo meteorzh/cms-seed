@@ -42,7 +42,7 @@ public class RegionController {
     /**
      * 删除角色
      * @param id
-     * @return
+     * @return {@code CommonResponse<Object>}
      */
     @DeleteMapping("/sys/region/del/{id}")
     public CommonResponse<Object> delete(@PathVariable("id") Long id) throws BusinessException {
@@ -52,9 +52,20 @@ public class RegionController {
     }
 
     /**
+     * 根据地区名查询地区
+     * @param name 地区名
+     * @return {@code CommonResponse<List<RegionPO>>}
+     */
+    @GetMapping("/sys/region/querylist")
+    public CommonResponse<List<RegionPO>> queryList(String name) {
+        log.debug("查询地区信息: name={}", name);
+        return CommonResponse.newSuccessResponse(regionService.queryList(name));
+    }
+
+    /**
      * 查询下级地区信息
      * @param pcode
-     * @return
+     * @return {@code CommonResponse<List<RegionPO>>}
      */
     @GetMapping("/sys/region/children/{pcode}")
     public CommonResponse<List<RegionPO>> children(@PathVariable("pcode") Integer pcode) {

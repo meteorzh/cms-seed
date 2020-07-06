@@ -35,6 +35,13 @@ public interface IRegionService extends IService<RegionPO> {
     void delete(Long id) throws BusinessException;
 
     /**
+     * 根据地区名查询地区信息
+     * @param name 地区名
+     * @return {@code List<RegionPO>}
+     */
+    List<RegionPO> queryList(String name);
+
+    /**
      * 根据上级地区编码查询下级地区
      * @param pcode 上级地区编码
      * @return {@code List<RegionPO>}

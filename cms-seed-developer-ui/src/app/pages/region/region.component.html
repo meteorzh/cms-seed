@@ -1,7 +1,9 @@
 <h2>地区管理</h2>
-<div nz-row nzType="flex" nzAlign="middle">
-    <div nz-col nzSpan="12" style="margin-top: 10px; font-size: 1.2em"><strong>地区列表</strong></div>
-    <div nz-col nzOffset="10" nzSpan="2"><button nz-button nzType="primary" (click)="onAddClick($event)">Add</button>
+<div nz-row nzType="flex" nzAlign="middle" style="margin-bottom: 10px;">
+    <div nz-col nzSpan="2" style="font-size: 1.2em"><strong>地区列表</strong></div>
+    <div nz-col nzSpan="3"><input nz-input type="text" [(ngModel)]="searchKey" /></div>
+    <div nz-col nzOffset="1" nzSpan="1"><button nz-button nzType="primary" (click)="onSearchClick()">搜索</button></div>
+    <div nz-col nzOffset="15" nzSpan="2"><button nz-button nzType="primary" (click)="onAddClick($event)">Add</button>
     </div>
 </div>
 <nz-table [nzData]="regions" nzSize="small" [nzLoading]="loading" nzTableLayout="fixed" nzFrontPagination="false" [nzScroll]="{ y: '500px' }">
@@ -10,7 +12,7 @@
             <th nzWidth="50px"></th>
             <th nzWidth="170px">编码</th>
             <th>地区</th>
-            <th>简称</th>
+            <th nzWidth="80px">简称</th>
             <th nzWidth="60px">等级</th>
             <th nzWidth="60px">区号</th>
             <th nzWidth="80px">邮编</th>
@@ -31,10 +33,10 @@
                 </td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.sname }}</td>
-                <td>{{ item.level }}</td>
+                <td>{{ regionLevel[item.level] }}</td>
                 <td>{{ item.citycode }}</td>
                 <td>{{ item.yzcode }}</td>
-                <td nzEllipsis="true" nz-tooltip [nzTooltipTitle]="item.mername">{{ item.mername }}</td>
+                <td nzEllipsis="true" nz-tooltip nzTooltipPlacement="topLeft" [nzTooltipTitle]="item.mername">{{ item.mername }}</td>
                 <td>{{ item.lng }}</td>
                 <td>{{ item.lat }}</td>
                 <td>{{ item.pinyin }}</td>

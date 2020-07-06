@@ -30,6 +30,13 @@ public interface RegionMapper extends BaseMapper<RegionPO> {
     int update(RegionPO region);
 
     /**
+     * 根据地区名查询地区
+     * @param name 地区名
+     * @return {@code List<RegionPO>}
+     */
+    List<RegionPO> selectByName(@Param("name") String name);
+
+    /**
      * 根据上级地区编码查询地区信息
      * @param pcode 上级地区编码
      * @return {@code List<RegionPO>}

@@ -4,6 +4,7 @@ import { RegionService } from './region.service';
 import { CommonObserver } from 'src/app/common/base-http.service';
 import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd';
+import { RegionLevel } from 'src/app/common/common';
 
 @Component({
     selector: 'app-region',
@@ -11,6 +12,10 @@ import { NzMessageService } from 'ng-zorro-antd';
     styleUrls: ['./region.component.less']
 })
 export class RegionComponent implements OnInit {
+
+    regionLevel: {[key: number]: string} = RegionLevel;
+
+    searchKey: string;
 
     regions: any[] = [];
 
@@ -48,6 +53,17 @@ export class RegionComponent implements OnInit {
         let mernameControl: FormControl = new FormControl();
         mernameControl.disable();
         this.regionForm.addControl("mername", mernameControl);
+    }
+
+    onSearchClick(): void {
+        if (this.searchKey) {
+            this.regionService.search(this.searchKey).subscribe(new CommonObserver(this.router, this.messageService, resp => {
+                for (const n of resp.data) n.dlv = 0;
+                this.regions = resp.data;
+            }, false));
+        } else {
+            this.refresh();
+        }
     }
 
     refresh() {

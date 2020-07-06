@@ -2,9 +2,8 @@ import { NgModule } from '@angular/core';
 
 import { RegionRoutingModule } from "./region-routing.module";
 import { RegionComponent } from "./region.component";
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { NzGridModule, NzTableModule, NzButtonModule, NzDividerModule, NzIconModule, NzModalModule, NzFormModule, NzInputModule, NzPopconfirmModule, NzToolTipModule, NzMessageModule } from 'ng-zorro-antd';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NzTableModule, NzDividerModule, NzModalModule, NzPopconfirmModule, NzToolTipModule } from 'ng-zorro-antd';
 import { RegionService } from './region.service';
 import { SharedModule } from 'src/app/common/shared.module';
 
@@ -15,7 +14,6 @@ import { SharedModule } from 'src/app/common/shared.module';
         RegionRoutingModule, 
         NzTableModule,
         NzDividerModule,
-        NzIconModule,
         NzModalModule,
         NzPopconfirmModule,
         NzToolTipModule,
