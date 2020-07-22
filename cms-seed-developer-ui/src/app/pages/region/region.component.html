@@ -1,118 +1,120 @@
-<h2>地区管理</h2>
-<div nz-row nzType="flex" nzAlign="middle" style="margin-bottom: 10px;">
-    <div nz-col nzSpan="2" style="font-size: 1.2em"><strong>地区列表</strong></div>
-    <div nz-col nzSpan="3"><input nz-input type="text" [(ngModel)]="searchKey" /></div>
-    <div nz-col nzOffset="1" nzSpan="1"><button nz-button nzType="primary" (click)="onSearchClick()">搜索</button></div>
-    <div nz-col nzOffset="15" nzSpan="2"><button nz-button nzType="primary" (click)="onAddClick($event)">Add</button>
+<div class="app-full-flex-vbox">
+    <h2>地区管理</h2>
+    <div nz-row nzType="flex" nzAlign="middle" style="margin-bottom: 10px;">
+        <div nz-col nzSpan="2" style="font-size: 1.2em"><strong>地区列表</strong></div>
+        <div nz-col nzSpan="3"><input nz-input type="text" [(ngModel)]="searchKey" /></div>
+        <div nz-col nzOffset="1" nzSpan="1"><button nz-button nzType="primary" (click)="onSearchClick()">搜索</button></div>
+        <div nz-col nzOffset="15" nzSpan="2"><button nz-button nzType="primary" (click)="onAddClick($event)">Add</button>
+        </div>
     </div>
-</div>
-<nz-table [nzData]="regions" nzSize="small" [nzLoading]="loading" nzTableLayout="fixed" nzFrontPagination="false" [nzScroll]="{ y: '500px' }">
-    <thead>
-        <tr>
-            <th nzWidth="50px"></th>
-            <th nzWidth="170px">编码</th>
-            <th>地区</th>
-            <th nzWidth="80px">简称</th>
-            <th nzWidth="60px">等级</th>
-            <th nzWidth="60px">区号</th>
-            <th nzWidth="80px">邮编</th>
-            <th>组合名</th>
-            <th nzWidth="80px">经度</th>
-            <th nzWidth="80px">纬度</th>
-            <th>全拼</th>
-            <th>操作</th>
-        </tr>
-    </thead>
-    <tbody>
-        <ng-container *ngFor="let item of regions; let i = index">
-            <tr *ngIf="(item.parent && item.parent.expand) || !item.parent" [ngClass]="{'selected-row': item === selectedRegion}">
-                <td [nzChecked]="item === selectedRegion" (nzCheckedChange)="onSelectChange(item, $event)"></td>
-                <td [nzIndentSize]="item.dlv! * 20" [nzShowExpand]="!item.children || item.children.length > 0"
-                    [(nzExpand)]="item.expand" (nzExpandChange)="collapse(i, item, $event)">
-                    {{ item.code }}
-                </td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.sname }}</td>
-                <td>{{ regionLevel[item.level] }}</td>
-                <td>{{ item.citycode }}</td>
-                <td>{{ item.yzcode }}</td>
-                <td nzEllipsis="true" nz-tooltip nzTooltipPlacement="topLeft" [nzTooltipTitle]="item.mername">{{ item.mername }}</td>
-                <td>{{ item.lng }}</td>
-                <td>{{ item.lat }}</td>
-                <td>{{ item.pinyin }}</td>
-                <td>
-                    <a (click)="onEditClick(item)">Edit</a>
-                    <nz-divider nzType="vertical"></nz-divider>
-                    <a nz-popconfirm [nzPopconfirmTitle]="confirmTextTpl" (nzOnConfirm)="remove(item)">Remove</a>
-                    <ng-template #confirmTextTpl>
-                        <p>
-                            <i nz-icon nzType="warning" nzTheme="fill" style="color: red;font-size: 20px;"></i>
-                            确认删除这个地区<strong style="color: red;">及以下所有下级地区</strong>吗?!!
-                        </p>
-                    </ng-template>
-                </td>
+    <nz-table [nzData]="regions" nzSize="small" [nzLoading]="loading" nzTableLayout="fixed" nzFrontPagination="false" [ngClass]="{'app-flex-grow': true}">
+        <thead>
+            <tr>
+                <th nzWidth="50px"></th>
+                <th nzWidth="170px">编码</th>
+                <th>地区</th>
+                <th nzWidth="80px">简称</th>
+                <th nzWidth="60px">等级</th>
+                <th nzWidth="60px">区号</th>
+                <th nzWidth="80px">邮编</th>
+                <th>组合名</th>
+                <th nzWidth="80px">经度</th>
+                <th nzWidth="80px">纬度</th>
+                <th>全拼</th>
+                <th>操作</th>
             </tr>
-        </ng-container>
-    </tbody>
-</nz-table>
-<nz-modal [(nzVisible)]="editVisible" [nzTitle]="modalTitle" (nzOnCancel)="onModalCancelClick()" (nzOnOk)="onModalSaveClick()">
-    <form nz-form [formGroup]="regionForm">
-        <input hidden formControlName="id" id="id" />
-        <input hidden formControlName="pcode" id="pcode" />
-        <input hidden formControlName="level" id="level" />
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区编码</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区编码">
-                <input nz-input formControlName="code" id="code" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区名称</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区名称">
-                <input nz-input id="name" formControlName="name" (ngModelChange)="nameControlChange($event)" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区简称</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区简称">
-                <input nz-input id="sname" formControlName="sname" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24">组合名</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input id="mername" formControlName="mername" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24">区号</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input id="citycode" formControlName="citycode" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24">邮编</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input id="yzcode" formControlName="yzcode" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24">经度</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input id="lng" formControlName="lng" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24">纬度</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input id="lat" formControlName="lat" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24">拼音</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input id="pinyin" formControlName="pinyin" />
-            </nz-form-control>
-        </nz-form-item>
-    </form>
-</nz-modal>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let item of regions; let i = index">
+                <tr *ngIf="(item.parent && item.parent.expand) || !item.parent" [ngClass]="{'selected-row': item === selectedRegion}">
+                    <td [nzChecked]="item === selectedRegion" (nzCheckedChange)="onSelectChange(item, $event)"></td>
+                    <td [nzIndentSize]="item.dlv! * 20" [nzShowExpand]="!item.children || item.children.length > 0"
+                        [(nzExpand)]="item.expand" (nzExpandChange)="collapse(i, item, $event)">
+                        {{ item.code }}
+                    </td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.sname }}</td>
+                    <td>{{ regionLevel[item.level] }}</td>
+                    <td>{{ item.citycode }}</td>
+                    <td>{{ item.yzcode }}</td>
+                    <td nzEllipsis="true" nz-tooltip nzTooltipPlacement="topLeft" [nzTooltipTitle]="item.mername">{{ item.mername }}</td>
+                    <td>{{ item.lng }}</td>
+                    <td>{{ item.lat }}</td>
+                    <td>{{ item.pinyin }}</td>
+                    <td>
+                        <a (click)="onEditClick(item)">Edit</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a nz-popconfirm [nzPopconfirmTitle]="confirmTextTpl" (nzOnConfirm)="remove(item)">Remove</a>
+                        <ng-template #confirmTextTpl>
+                            <p>
+                                <i nz-icon nzType="warning" nzTheme="fill" style="color: red;font-size: 20px;"></i>
+                                确认删除这个地区<strong style="color: red;">及以下所有下级地区</strong>吗?!!
+                            </p>
+                        </ng-template>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </nz-table>
+    <nz-modal [(nzVisible)]="editVisible" [nzTitle]="modalTitle" (nzOnCancel)="onModalCancelClick()" (nzOnOk)="onModalSaveClick()">
+        <form nz-form [formGroup]="regionForm">
+            <input hidden formControlName="id" id="id" />
+            <input hidden formControlName="pcode" id="pcode" />
+            <input hidden formControlName="level" id="level" />
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区编码</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区编码">
+                    <input nz-input formControlName="code" id="code" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区名称</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区名称">
+                    <input nz-input id="name" formControlName="name" (ngModelChange)="nameControlChange($event)" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>地区简称</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入地区简称">
+                    <input nz-input id="sname" formControlName="sname" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">组合名</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input id="mername" formControlName="mername" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">区号</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input id="citycode" formControlName="citycode" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">邮编</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input id="yzcode" formControlName="yzcode" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">经度</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input id="lng" formControlName="lng" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">纬度</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input id="lat" formControlName="lat" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">拼音</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input id="pinyin" formControlName="pinyin" />
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </nz-modal>
+</div>
