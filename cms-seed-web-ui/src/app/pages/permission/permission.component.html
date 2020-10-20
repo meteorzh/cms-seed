@@ -1,0 +1,55 @@
+<h2>权限管理</h2>
+<form nz-form [formGroup]="searchForm" (ngSubmit)="submitForm($event, searchForm.value)">
+    <div nz-row nzType="flex" nzAlign="middle">
+        <div nz-col nzSpan="6">
+            <nz-form-item style="margin: 5px 0">
+                <nz-form-label>Key</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="key" placeholder="code or label">
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+            <nz-form-item style="margin: 5px 0">
+                <nz-form-label>Category</nz-form-label>
+                <nz-form-control>
+                    <nz-select formControlName="category" nzPlaceHolder="category" nzAllowClear style="width: 150px">
+                        <nz-option *ngFor="let item of categorys" [nzLabel]="item.label" [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="6">
+            <button nz-button nzType="primary">Search</button>
+        </div>
+        <div nz-col nzOffset="3" nzSpan="3">
+            <button nz-button nzType="primary" (click)="onAddClick($event)">Add</button>
+        </div>
+    </div>
+</form>
+<nz-table #pmsTable [nzFrontPagination]="false" [nzData]="page.records" [nzLoading]="loading" [nzTotal]="page.total" 
+        [(nzPageIndex)]="pageNo" [(nzPageSize)]="pageSize" (nzPageIndexChange)="onPageChange($event)" 
+        (nzPageSizeChange)="onPageChange($event, true)">
+    <thead>
+        <tr>
+            <th>code</th>
+            <th>label</th>
+            <th>description</th>
+            <th>category</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of pmsTable.data">
+            <td>{{item.code}}</td>
+            <td>{{item.label}}</td>
+            <td>{{item.description}}</td>
+            <td>{{item.category}}</td>
+            <td>
+                <a routerLink="edit" (click)="onEditClick(item)">Edit</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (nzOnConfirm)="del(item)" nz-popconfirm nzPopconfirmTitle="确认删除这个权限条目吗? 请注意删除此权限涉及的代码修改!!">Remove</a>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

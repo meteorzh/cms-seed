@@ -1,0 +1,46 @@
+<h2>{{ isCreate ? '创建' : ( isEdit ? '编辑' : '查看' ) }}字典条目</h2>
+<form nz-form [formGroup]="dictEditForm" nzLayout="horizontal">
+    <nz-form-item>
+        <nz-form-label nzSpan="2" nzRequired>Label</nz-form-label>
+        <nz-form-control nzSpan="4" [nzErrorTip]="labelTipTpl">
+            <input nz-input formControlName="label" placeholder="Please input label" />
+            <ng-template #labelTipTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                    请输入Label
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzSpan="2" nzRequired>Value</nz-form-label>
+        <nz-form-control nzSpan="4" [nzErrorTip]="valueTipTpl">
+            <nz-input-number formControlName="value" [nzMin]="1" [nzPlaceHolder]="'Please input value'" style="width: 100%"></nz-input-number>
+            <ng-template #valueTipTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                    请输入Value
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzSpan="2" nzRequired>Type</nz-form-label>
+        <nz-form-control nzSpan="4" [nzErrorTip]="typeTipTpl">
+            <nz-select *ngIf="mode == 0" nzPlaceHolder="Please select or input" formControlName="type" nzShowSearch (nzOnSearch)="onSearchType($event)">
+                <nz-option *ngIf="showInputTypeOption" [nzLabel]="inputDictType" [nzValue]="inputDictType"></nz-option>
+                <nz-option *ngFor="let dictType of dictTypes" [nzLabel]="dictType" [nzValue]="dictType"></nz-option>
+            </nz-select>
+            <ng-template #typeTipTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                    请选择或者输入type
+                </ng-container>
+            </ng-template>
+            <input nz-input *ngIf="mode != 0" formControlName="type" />
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-control nzSpan="4" nzOffset="2">
+            <button nz-button nzType="primary" (click)="submitEditForm($event)" [disabled]="!dictEditForm.valid">保存</button>
+            <button nz-button nzType="default" (click)="back($event)" style="margin-left: 10px">返回</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>

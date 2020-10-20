@@ -1,0 +1,41 @@
+<div nz-row nzType="flex" nzAlign="middle">
+    <div nz-col nzSpan="12">
+        <h2>字典管理</h2>
+    </div>
+    <div nz-col nzOffset="7" nzSpan="2"><button nz-button nzType="primary" (click)="onAddClick($event)">Add</button></div>
+</div>
+<div nz-row nzType="flex" nzGutter="16" style="align-items: stretch">
+    <div nz-col nzSpan="4">
+        <nz-list id="type-list" [nzDataSource]="dictTypes" [nzRenderItem]="item" style="max-height: 500px; overflow-y:scroll">
+            <ng-template #item let-i>
+                <nz-list-item class="type-item" [ngClass]="{'selected-type-item': i == selectedType}" (click)="onTypeClick(i)">
+                    <span style="padding-left: 2em">{{i}}</span>
+                </nz-list-item>
+            </ng-template>
+        </nz-list>
+    </div>
+    <div nz-col nzSpan="16">
+        <nz-table #nzTable nzBordered [nzData]="dicts" [nzFrontPagination]="false" [nzShowPagination]="false" style="max-height: 500px; overflow-y: scroll">
+            <thead>
+                <tr>
+                    <th>Label</th>
+                    <th>Value</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody cdkDropList (cdkDropListDropped)="onDragDropped($event)">
+                <tr *ngFor="let i of dicts" cdkDrag>
+                    <td>{{i.label}}</td>
+                    <td>{{i.value}}</td>
+                    <td>{{i.type}}</td>
+                    <td>
+                        <a routerLink="edit" (click)="onEditClick(i)">Edit</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a (nzOnConfirm)="del(i)" nz-popconfirm nzPopconfirmTitle="确认删除这个字典条目吗?">Remove</a>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>

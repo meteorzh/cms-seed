@@ -1,0 +1,49 @@
+<form nz-form [formGroup]="pmsForm" (ngSubmit)="submitForm($event, pmsForm.value)" nzLayout="horizontal">
+    <nz-form-item>
+        <nz-form-label nzRequired nzSpan="3">Code</nz-form-label>
+        <nz-form-control nzSpan="8">
+            <input nz-input formControlName="code" placeholder="input code" />
+            <ng-template #codeErrorTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                    请输入Code
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzRequired nzSpan="3">Label</nz-form-label>
+        <nz-form-control nzSpan="8">
+            <input nz-input formControlName="label" placeholder="input label" />
+            <ng-template #labelErrorTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                    请输入Label
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzSpan="3">Description</nz-form-label>
+        <nz-form-control nzSpan="8">
+            <textarea nz-input formControlName="description" nzAutosize placeholder="description for this permission"></textarea>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzRequired nzSpan="3">Category</nz-form-label>
+        <nz-form-control nzSpan="8">
+            <nz-select formControlName="category">
+                <nz-option *ngFor="let item of categorys" [nzLabel]="item.label" [nzValue]="item.value"></nz-option>
+            </nz-select>
+            <ng-template #categoryErrorTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                    请选择权限分类
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-control nzSpan="6" nzOffset="3">
+            <button nz-button nzType="primary" [disabled]="!pmsForm.valid">保存</button>
+            <button nz-button nzType="default" (click)="back($event)" style="margin-left: 10px">返回</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>

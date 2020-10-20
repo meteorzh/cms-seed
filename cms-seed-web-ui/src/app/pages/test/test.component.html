@@ -1,0 +1,44 @@
+<button nz-button nzType="primary" (click)="test($event)">测试Test接口</button>
+<div>{{testResult}}</div>
+<div class="tree-container">
+    <ng-container *ngFor="let item of data.children">
+        <ng-container *ngTemplateOutlet="row; context: {'data':item}"></ng-container>
+    </ng-container>
+</div>
+<ng-template #row let-rowdata="data">
+    <div class="node-row">
+        <div class="node-head-col"><span (click)="clickHeadCol(rowdata)">{{rowdata.value}}</span></div>
+        <ng-container *ngIf="rowdata.children?.length > 0; else detail">
+            <div *ngIf="!rowdata.collapse">
+                <ng-container *ngFor="let item of rowdata.children">
+                    <ng-container *ngTemplateOutlet="row; context: {'data':item}"></ng-container>
+                </ng-container>
+            </div>
+            <ng-container *ngIf="rowdata.collapse">
+                <ng-container *ngTemplateOutlet="collapse; context: {'data':getLast(rowdata.children)}"></ng-container>
+            </ng-container>
+        </ng-container>
+        <ng-template #detail>
+            <div class="node-value-col">{{rowdata.customerNumber}}</div>
+            <div class="node-value-col">{{rowdata.taxIncome}}</div>
+            <div class="node-value-col">{{rowdata.noTaxIncome}}</div>
+            <div class="node-value-col">{{rowdata.noTaxSaleDiscount}}</div>
+            <div class="node-value-col">{{rowdata.pureIncome}}</div>
+            <div class="node-value-col">{{rowdata.noTaxCost}}</div>
+            <div class="node-value-col">{{rowdata.noTaxPurchaseBenefit}}</div>
+            <div class="node-value-col">{{rowdata.pureCost}}</div>
+            <div class="node-value-col">{{rowdata.roughProfit}}</div>
+        </ng-template>
+    </div>
+</ng-template>
+<ng-template #collapse let-rowdata="data">
+    <div class="node-value-col">{{rowdata.customerNumber}}</div>
+    <div class="node-value-col">{{rowdata.taxIncome}}</div>
+    <div class="node-value-col">{{rowdata.noTaxIncome}}</div>
+    <div class="node-value-col">{{rowdata.noTaxSaleDiscount}}</div>
+    <div class="node-value-col">{{rowdata.pureIncome}}</div>
+    <div class="node-value-col">{{rowdata.noTaxCost}}</div>
+    <div class="node-value-col">{{rowdata.noTaxPurchaseBenefit}}</div>
+    <div class="node-value-col">{{rowdata.pureCost}}</div>
+    <div class="node-value-col">{{rowdata.roughProfit}}</div>
+</ng-template>

@@ -58,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessHandler(new RestLogoutSuccessHandler())
 				.permitAll();
 
-		http.addFilterBefore(new EncryptionFilter(encryptionProperties), SecurityContextPersistenceFilter.class);
+//		http.addFilterBefore(new EncryptionFilter(encryptionProperties), SecurityContextPersistenceFilter.class);
 	}
 	
 	@Override

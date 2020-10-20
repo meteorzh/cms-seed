@@ -1,0 +1,11 @@
+#type-list {
+    border: 1px solid #cccccc;
+    border-radius: 4px 4px 0 0;
+}
+.type-item:hover {
+    cursor: pointer;
+}
+
+.selected-type-item {
+    background-color: #e6f7ff;
+}
